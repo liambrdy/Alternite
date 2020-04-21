@@ -17,5 +17,7 @@ matrix:
             - libxi-dev
 
 script:
-  - cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug
-  - cmake --build 
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - cmake --build .

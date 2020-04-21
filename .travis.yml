@@ -7,15 +7,29 @@ branches:
 matrix:
   include:
     - os: linux
-      dist: bionic
+      dist: xenial
+      sudo: required
       addons:
         apt:
           packages:
-            - cmake
             - libxrandr-dev
             - libxinerama-dev
             - libxcursor-dev
             - libxi-dev
+
+install:
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir ${DEPS_DIR} 
+  - cd ${DEPS_DIR}
+  - travis_retry wget https://github.com/Kitware/CMake/releases/download/v3.15.3/cmake-3.15.3.tar.gz  
+  - tar -xzvf cmake-3.15.3.tar.gz >log1
+  - mv cmake-3.15.3 cmake_install
+  - cd cmake_install
+  - ./configure >log2
+  - make >log3
+  - sudo make install >log4
+  - PATH=${DEPS_DIR}/cmake_install:${DEPS_DIR}/cmake_install/bin:$PATH
+  - cd ${TRAVIS_BUILD_DIR}
 
 script:
   - cmake --version

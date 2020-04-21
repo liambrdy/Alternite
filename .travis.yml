@@ -1,0 +1,21 @@
+language: cpp
+compiler: gcc
+branches:
+  only:
+    - master
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      addons:
+        apt:
+          packages:
+            - libxrandr-dev
+            - libxinerama-dev
+            - libxcursor-dev
+            - libxi-dev
+
+script:
+  - cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug
+  - cmake --build 

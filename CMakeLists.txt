@@ -10,7 +10,7 @@ if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "")
-    set (CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug, Release, RelWithDebInfo, MinSizeRel")
+    set (CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug, Release, RelWithDebInfo, MinSizeRel" FORCE)
 endif()
 
 include(cmake/CPM.cmake)
@@ -76,4 +76,8 @@ target_include_directories(Alternite
     PRIVATE ${glfw_SOURCE_DIR}/include
     PRIVATE ${glad_BINARY_DIR}/include
     PRIVATE ${spdlog_SOURCE_DIR}
+)
+
+target_compile_definitions(Alternite
+    PRIVATE GLFW_INCLUDE_NONE
 )

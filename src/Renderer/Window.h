@@ -10,6 +10,8 @@ public:
     Window(uint32_t width, uint32_t height);
     virtual ~Window();
 
+    void OnUpdate();
+
     void SetVSync(bool enabled);
     bool GetVSync() const { return m_windowData.vsync; }
 

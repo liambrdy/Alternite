@@ -34,15 +34,25 @@ CPMAddPackage(
         "GLAD_API gl=4.6"
 )
 
+CPMAddPackage(
+    NAME spdlog
+    GITHUB_REPOSITORY gabime/spdlog
+    GIT_TAG v1.5.0
+    OPTIONS
+        "SPDLOG_BUILD_EXAMPLE OFF"
+)
+
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
-    ${PROJECT_SOURCE_DIR}/src/Alternite/Game.cpp
+    ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
+    ${PROJECT_SOURCE_DIR}/src/Core/Logger.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
 )
 
 set (headers
-    ${PROJECT_SOURCE_DIR}/src/Alternite/Scene.h
-    ${PROJECT_SOURCE_DIR}/src/Alternite/Game.h
+    ${PROJECT_SOURCE_DIR}/src/Core/Scene.h
+    ${PROJECT_SOURCE_DIR}/src/Core/Game.h
+    ${PROJECT_SOURCE_DIR}/src/Core/Logger.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
 )
 
@@ -57,10 +67,12 @@ set_target_properties(Alternite
 target_link_libraries(Alternite
     PRIVATE glfw
     PRIVATE glad
+    PRIVATE spdlog
 )
 
 target_include_directories(Alternite
     PRIVATE ${PROJECT_SOURCE_DIR}/src
     PRIVATE ${glfw_SOURCE_DIR}/include
     PRIVATE ${glad_BINARY_DIR}/include
+    PRIVATE ${spdlog_SOURCE_DIR}
 )

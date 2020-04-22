@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Core/Events.h"
+
 class Scene
 {
 public:
     virtual ~Scene() = default;
 
-    virtual Scene* Update(double delta) = 0;
-    virtual Scene* HandleEvent() = 0;
-    virtual void Render() const = 0;
+    virtual Scene* OnUpdate(double delta) = 0;
+    virtual Scene* OnEvent(const Event& event) = 0;
+    virtual void OnRender() const = 0;
 };

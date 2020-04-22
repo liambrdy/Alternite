@@ -8,7 +8,7 @@ public:
     Game();
     virtual ~Game();
 
-    virtual Scene* Update(double delta) override;
-    virtual Scene* HandleEvent() override;
-    virtual void Render() const override;
+    virtual Scene* OnUpdate(double delta) override;
+    virtual Scene* OnEvent(const Event& event) override;
+    virtual void OnRender() const override;
 };

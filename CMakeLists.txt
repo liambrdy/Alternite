@@ -53,6 +53,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Scene.h
     ${PROJECT_SOURCE_DIR}/src/Core/Game.h
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.h
+    ${PROJECT_SOURCE_DIR}/src/Core/Events.h
     ${PROJECT_SOURCE_DIR}/src/Core/Common.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
 )

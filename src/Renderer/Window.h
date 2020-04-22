@@ -1,8 +1,11 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include <GLFW/glfw3.h>
+
+#include "Core/Events.h"
 
 class Window
 {
@@ -11,6 +14,8 @@ public:
     virtual ~Window();
 
     void OnUpdate();
+
+    bool HasEventReady(Event& event);
 
     void SetVSync(bool enabled);
     bool GetVSync() const { return m_windowData.vsync; }
@@ -24,6 +29,7 @@ private:
     {
         uint32_t width, height;
         bool vsync;
+        std::vector<Event> events;
 
         WindowData(uint32_t width_, uint32_t height_)
         {

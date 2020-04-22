@@ -36,6 +36,14 @@ CPMAddPackage(
 
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
+    ${PROJECT_SOURCE_DIR}/src/Alternite/Game.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
+)
+
+set (headers
+    ${PROJECT_SOURCE_DIR}/src/Alternite/Scene.h
+    ${PROJECT_SOURCE_DIR}/src/Alternite/Game.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
 )
 
 add_executable(Alternite ${sources})
@@ -52,6 +60,7 @@ target_link_libraries(Alternite
 )
 
 target_include_directories(Alternite
+    PRIVATE ${PROJECT_SOURCE_DIR}/src
     PRIVATE ${glfw_SOURCE_DIR}/include
     PRIVATE ${glad_BINARY_DIR}/include
 )

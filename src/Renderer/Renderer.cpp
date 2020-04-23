@@ -50,7 +50,7 @@ void Renderer::Init(uint32_t width, uint32_t height)
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
     glDebugMessageCallback(DebugCallback, nullptr);
-    // glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
 
     s_width = width;
@@ -103,27 +103,23 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     glBindVertexArray(0);
 
-    GLuint vert = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert, 1, &vertSrc, nullptr);
-    glCompileShader(vert);
-
-    GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag, 1, &fragSrc, nullptr);
-    glCompileShader(frag);
-
-    s_data.shader = glCreateProgram();
-    glAttachShader(s_data.shader, vert);
-    glAttachShader(s_data.shader, frag);
-    glLinkProgram(s_data.shader);
-    glDetachShader(s_data.shader, vert);
-    glDetachShader(s_data.shader, frag);
-    glDeleteShader(vert);
-    glDeleteShader(frag);
+    s_data.shader = new Shader("assets/shaders/Quad.glsl");
 
     s_data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
     s_data.quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
     s_data.quadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
     s_data.quadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
+}
+
+void Renderer::Shutdown()
+{
+    delete s_data.shader;
+
+    glDeleteBuffers(1, &s_data.quadEBO);
+    glDeleteBuffers(1, &s_data.quadVBO);
+    glDeleteVertexArrays(1, &s_data.quadVAO);
+
+    delete[] s_data.quadVertexBufferBase;
 }
 
 void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -151,7 +147,7 @@ void Renderer::EndFrame()
     ptrdiff_t size = (uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, s_data.quadVertexBufferBase);
 
-    glUseProgram(s_data.shader);
+    s_data.shader->Bind();
 
     glBindVertexArray(s_data.quadVAO);
     glDrawElements(GL_TRIANGLES, s_data.quadIndexCount, GL_UNSIGNED_INT, nullptr);

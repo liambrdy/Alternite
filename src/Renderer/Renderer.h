@@ -4,10 +4,13 @@
 
 #include <glm/glm.hpp>
 
+#include "Renderer/Shader.h"
+
 class Renderer
 {
 public:
     static void Init(uint32_t width, uint32_t height);
+    static void Shutdown();
 
     static void OnWindowResize(uint32_t width, uint32_t height);
 
@@ -33,7 +36,7 @@ private:
         static const int MaxIndices = MaxQuads * 6;
 
         uint32_t quadVAO, quadVBO, quadEBO;
-        uint32_t shader;
+        Shader* shader;
 
         Renderer::QuadVertex* quadVertexBufferPtr = nullptr;
         Renderer::QuadVertex* quadVertexBufferBase = nullptr;

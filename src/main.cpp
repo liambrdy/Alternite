@@ -37,4 +37,6 @@ int main()
         
         window.OnUpdate();
     }
+
+    Renderer::Shutdown();
 }

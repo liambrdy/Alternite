@@ -31,7 +31,7 @@ private:
 
     struct RenderData
     {
-        static const int MaxQuads = 1000;
+        static const int MaxQuads = 20000;
         static const int MaxVertices = MaxQuads * 4;
         static const int MaxIndices = MaxQuads * 6;
 
@@ -42,8 +42,6 @@ private:
         Renderer::QuadVertex* quadVertexBufferBase = nullptr;
 
         uint32_t quadIndexCount = 0;
-
-        glm::vec4 quadVertexPositions[4];
     };
 
     static RenderData s_data;

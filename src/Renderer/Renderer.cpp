@@ -105,10 +105,10 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     s_data.shader = new Shader("assets/shaders/Quad.glsl");
 
-    s_data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-    s_data.quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
-    s_data.quadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
-    s_data.quadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
+    // s_data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+    // s_data.quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+    // s_data.quadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
+    // s_data.quadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
 }
 
 void Renderer::Shutdown()
@@ -133,13 +133,14 @@ void Renderer::BeginFrame()
 {
     s_data.quadVertexBufferPtr = s_data.quadVertexBufferBase;
     s_data.quadIndexCount = 0;
+
+    glDisable(GL_SCISSOR_TEST);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Renderer::EndFrame()
 {
-    glDisable(GL_SCISSOR_TEST);
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
     glScissor(0, 0, s_width, s_height);
 
@@ -147,7 +148,10 @@ void Renderer::EndFrame()
     ptrdiff_t size = (uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, s_data.quadVertexBufferBase);
 
+    glm::mat4 projectionMat = glm::ortho(0.0f, (float)s_width, 0.0f, (float)s_height, -1.f, 1.0f);
+
     s_data.shader->Bind();
+    s_data.shader->SetMat4("u_Projection", projectionMat);
 
     glBindVertexArray(s_data.quadVAO);
     glDrawElements(GL_TRIANGLES, s_data.quadIndexCount, GL_UNSIGNED_INT, nullptr);
@@ -159,11 +163,15 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::
     if (s_data.quadIndexCount >= s_data.MaxIndices)
         FlushAndReset();
 
-    glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 0.0f));
+    glm::vec2 quadPositions[4];
+    quadPositions[0] = { pos.x, pos.y };
+    quadPositions[1] = { pos.x + size.x, pos.y };
+    quadPositions[2] = { pos.x + size.x, pos.y + size.y };
+    quadPositions[3] = { pos.x, pos.y + size.y };
 
     for (uint32_t i = 0; i < 4; i++)
     {
-        s_data.quadVertexBufferPtr->position = transform * s_data.quadVertexPositions[i];
+        s_data.quadVertexBufferPtr->position = quadPositions[i];
         s_data.quadVertexBufferPtr->color = color;
 
         s_data.quadVertexBufferPtr++;

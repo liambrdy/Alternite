@@ -26,5 +26,10 @@ Scene* Game::OnUpdate(double delta)
 
 void Game::OnRender() const
 {
-    Renderer::DrawQuad({ 0.0f, 0.0f }, { 0.5f, 1.0f }, { 0.7f, 0.2f, 0.2f, 1.0f });
+    for (int y = 0; y < 600; y += 20)
+        for (int x = 0; x < 800; x += 20)
+        {
+            glm::vec4 color = { (float)x / 1600.0f, 0.3f, (float)y / 1200.0f, 1.0f };
+            Renderer::DrawQuad({ x, y }, { 19.0f, 19.0f }, color);
+        }
 }

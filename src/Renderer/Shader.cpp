@@ -6,6 +6,8 @@
 
 #include <fstream>
 
+#include <glm/gtc/type_ptr.hpp>
+
 static GLenum ShaderTypeFromString(const std::string& type)
 {
     if (type == "vertex")
@@ -41,42 +43,50 @@ void Shader::Unbind()
 
 void Shader::SetFloat(const std::string& name, float value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniform1f(location, value);
 }
 
 void Shader::SetFloat2(const std::string& name, const glm::vec2& value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniform2f(location, value.x, value.y);
 }
 
 void Shader::SetFloat3(const std::string& name, const glm::vec3& value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniform3f(location, value.x, value.y, value.z);
 }
 
 void Shader::SetFloat4(const std::string& name, const glm::vec4& value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
 void Shader::SetInt(const std::string& name, int value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniform1i(location, value);
 }
 
-void Shader::SetIntArray(const std::string& name, int* value)
+void Shader::SetIntArray(const std::string& name, int* value, uint32_t count)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniform1iv(location, count, value);
 }
 
 void Shader::SetMat3(const std::string& name, const glm::mat3& value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
 void Shader::SetMat4(const std::string& name, const glm::mat4& value)
 {
-    
+    int32_t location = GetUniformLocation(name);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
 std::string Shader::ReadFile(const std::string& filename)

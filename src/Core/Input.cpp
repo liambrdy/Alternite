@@ -2,6 +2,8 @@
 
 #include <cstring>
 
+#include "Renderer/Renderer.h"
+
 Input::InputData Input::s_data;
 
 void Input::Init(GLFWwindow* window_)
@@ -63,6 +65,11 @@ void Input::Init(GLFWwindow* window_)
         Input::InputData& data = *(Input::InputData*)glfwGetWindowUserPointer(window);
 
         data.windowShouldClose = true;
+    });
+
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int width, int height)
+    {
+        Renderer::OnWindowResize(width, height);
     });
 }
 

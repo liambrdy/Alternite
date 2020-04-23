@@ -19,6 +19,9 @@ Window::Window(uint32_t width, uint32_t height)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifndef NDEBUG
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
 
     m_window = glfwCreateWindow(m_width, m_height, "Alternite", nullptr, nullptr);
     ASSERT(m_window, "Failed to create GLFW window!");
@@ -41,9 +44,9 @@ Window::~Window()
 
 void Window::OnUpdate()
 {
-    Input::Update();
     glfwPollEvents();
     glfwSwapBuffers(m_window);
+    Input::Update();
 }
 
 void Window::SetVSync(bool enabled)

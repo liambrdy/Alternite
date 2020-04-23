@@ -54,6 +54,7 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Input.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.cpp
 )
 
 set (headers
@@ -63,6 +64,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Common.h
     ${PROJECT_SOURCE_DIR}/src/Core/Input.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.h
 )
 
 add_executable(Alternite ${sources})

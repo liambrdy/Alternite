@@ -6,6 +6,7 @@
 #include "Core/Common.h"
 
 #include "Renderer/Window.h"
+#include "Renderer/Renderer.h"
 
 int main()
 {
@@ -14,11 +15,12 @@ int main()
     Scene* scene = new Game();
     Window window(800, 600);
 
+    Renderer::Init();
+    
     double time = glfwGetTime();
 
     for (;;)
     {
-        window.OnUpdate();
         scene->OnRender();
 
         double currentTime = glfwGetTime();
@@ -26,5 +28,7 @@ int main()
         if (!scene)
             return 0;
         time = currentTime;
+
+        window.OnUpdate();
     }
 }

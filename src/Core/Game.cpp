@@ -13,11 +13,6 @@ Game::~Game()
 
 Scene* Game::OnUpdate(double delta)
 {
-    if (Input::IsKeyDown(GLFW_KEY_Q))
-        LOG_INFO("Q Down");
-    if (Input::IsKeyPressed(GLFW_KEY_W))
-        LOG_INFO("W Pressed");
-
     if (Input::WindowShouldClose())
     {
         delete this;

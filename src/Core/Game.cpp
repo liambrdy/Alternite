@@ -1,35 +1,27 @@
 #include "Game.h"
 
 #include "Core/Common.h"
+#include "Core/Input.h"
 
 Game::Game()
 {
-    
 }
 
 Game::~Game()
 {
-    
 }
 
 Scene* Game::OnUpdate(double delta)
 {
-    return this;
-}
+    if (Input::IsKeyDown(GLFW_KEY_Q))
+        LOG_INFO("Q Down");
+    if (Input::IsKeyPressed(GLFW_KEY_W))
+        LOG_INFO("W Pressed");
 
-Scene* Game::OnEvent(const Event& event)
-{
-    switch (event.type)
+    if (Input::WindowShouldClose())
     {
-        case WindowClosed:
-        {
-            delete this;
-            return nullptr;
-        }
-        case KeyPressed:
-        {
-            LOG_INFO((char)event.keyboard.key);
-        }
+        delete this;
+        return nullptr;
     }
 
     return this;

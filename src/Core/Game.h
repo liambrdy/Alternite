@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene.h"
+#include "Core/Scene.h"
 
 class Game : public Scene
 {
@@ -9,6 +9,5 @@ public:
     virtual ~Game();
 
     virtual Scene* OnUpdate(double delta) override;
-    virtual Scene* OnEvent(const Event& event) override;
     virtual void OnRender() const override;
 };

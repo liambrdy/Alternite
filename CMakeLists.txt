@@ -42,10 +42,17 @@ CPMAddPackage(
         "SPDLOG_BUILD_EXAMPLE OFF"
 )
 
+CPMAddPackage(
+    NAME glm
+    GITHUB_REPOSITORY g-truc/glm
+    GIT_TAG 0.9.9.8
+)
+
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.cpp
+    ${PROJECT_SOURCE_DIR}/src/Core/Input.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
 )
 
@@ -53,15 +60,15 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Scene.h
     ${PROJECT_SOURCE_DIR}/src/Core/Game.h
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.h
-    ${PROJECT_SOURCE_DIR}/src/Core/Events.h
     ${PROJECT_SOURCE_DIR}/src/Core/Common.h
+    ${PROJECT_SOURCE_DIR}/src/Core/Input.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
 )
 
 add_executable(Alternite ${sources})
 set_target_properties(Alternite
     PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
     OUTPUT_NAME "main"
 )
@@ -77,6 +84,7 @@ target_include_directories(Alternite
     PRIVATE ${glfw_SOURCE_DIR}/include
     PRIVATE ${glad_BINARY_DIR}/include
     PRIVATE ${spdlog_SOURCE_DIR}
+    PRIVATE ${glm_SOURCE_DIR}
 )
 
 target_compile_definitions(Alternite

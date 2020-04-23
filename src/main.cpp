@@ -21,14 +21,6 @@ int main()
         window.OnUpdate();
         scene->OnRender();
 
-        Event e;
-        while (window.HasEventReady(e))
-        {
-            scene = scene->OnEvent(e);
-            if (!scene)
-                return 0;
-        }
-
         double currentTime = glfwGetTime();
         scene = scene->OnUpdate(currentTime - time);
         if (!scene)

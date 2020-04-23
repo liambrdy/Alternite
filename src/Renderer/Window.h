@@ -5,8 +5,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Core/Events.h"
-
 class Window
 {
 public:
@@ -15,29 +13,13 @@ public:
 
     void OnUpdate();
 
-    bool HasEventReady(Event& event);
-
     void SetVSync(bool enabled);
-    bool GetVSync() const { return m_windowData.vsync; }
+    bool GetVSync() const { return m_vsync; }
 
-    uint32_t GetWidth() const { return m_windowData.width; }
-    uint32_t GetHeight() const { return m_windowData.height; }
+    uint32_t GetWidth() const { return m_width; }
+    uint32_t GetHeight() const { return m_height; }
 private:
     GLFWwindow* m_window;
-
-    struct WindowData
-    {
-        uint32_t width, height;
-        bool vsync;
-        std::vector<Event> events;
-
-        WindowData(uint32_t width_, uint32_t height_)
-        {
-            width = width_;
-            height = height_;
-            vsync = true;
-        }
-    };
-
-    WindowData m_windowData;
+    bool m_vsync = true;
+    uint32_t m_width, m_height;
 };

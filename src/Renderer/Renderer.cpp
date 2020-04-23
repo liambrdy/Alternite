@@ -50,7 +50,8 @@ void Renderer::Init(uint32_t width, uint32_t height)
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
     glDebugMessageCallback(DebugCallback, nullptr);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+    glDebugMessageControl(GL_DEBUG_SOURCE_SHADER_COMPILER, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_FALSE);
 #endif
 
     s_width = width;
@@ -76,8 +77,9 @@ void Renderer::Init(uint32_t width, uint32_t height)
     glBindBuffer(GL_ARRAY_BUFFER, s_data.quadVBO);
     glBufferData(GL_ARRAY_BUFFER, s_data.MaxVertices * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
-    SetBufferAttributeLayout(0, 2, 6, 0);
-    SetBufferAttributeLayout(1, 4, 6, 2);
+    SetBufferAttributeLayout(0, 2, 8, 0);
+    SetBufferAttributeLayout(1, 4, 8, 2);
+    SetBufferAttributeLayout(2, 2, 8, 6);
 
     uint32_t* quadIndices = new uint32_t[s_data.MaxIndices];
 
@@ -103,7 +105,13 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     glBindVertexArray(0);
 
+    s_data.whiteTexture = new Texture(1, 1);
+    uint32_t whiteTextureData = 0xffffffff;
+    s_data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
     s_data.shader = new Shader("assets/shaders/Quad.glsl");
+    s_data.shader->Bind();
+    s_data.shader->SetInt("u_Texture", 0);
 
     // s_data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
     // s_data.quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
@@ -114,6 +122,7 @@ void Renderer::Init(uint32_t width, uint32_t height)
 void Renderer::Shutdown()
 {
     delete s_data.shader;
+    delete s_data.whiteTexture;
 
     glDeleteBuffers(1, &s_data.quadEBO);
     glDeleteBuffers(1, &s_data.quadVBO);
@@ -150,6 +159,8 @@ void Renderer::EndFrame()
 
     glm::mat4 projectionMat = glm::ortho(0.0f, (float)s_width, 0.0f, (float)s_height, -1.f, 1.0f);
 
+    s_data.whiteTexture->Bind();
+
     s_data.shader->Bind();
     s_data.shader->SetMat4("u_Projection", projectionMat);
 
@@ -169,10 +180,17 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::
     quadPositions[2] = { pos.x + size.x, pos.y + size.y };
     quadPositions[3] = { pos.x, pos.y + size.y };
 
+    glm::vec2 quadUVs[4];
+    quadUVs[0] = { 0.0f, 0.0f };
+    quadUVs[1] = { 1.0f, 0.0f };
+    quadUVs[2] = { 1.0f, 1.0f };
+    quadUVs[3] = { 0.0f, 1.0f };
+
     for (uint32_t i = 0; i < 4; i++)
     {
         s_data.quadVertexBufferPtr->position = quadPositions[i];
         s_data.quadVertexBufferPtr->color = color;
+        s_data.quadVertexBufferPtr->uvCoord = quadUVs[i];
 
         s_data.quadVertexBufferPtr++;
     }

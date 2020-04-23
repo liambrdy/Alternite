@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "Renderer/Shader.h"
+#include "Renderer/Texture.h"
 
 class Renderer
 {
@@ -27,6 +28,7 @@ private:
     {
         glm::vec2 position;
         glm::vec4 color;
+        glm::vec2 uvCoord;
     };
 
     struct RenderData
@@ -37,6 +39,7 @@ private:
 
         uint32_t quadVAO, quadVBO, quadEBO;
         Shader* shader;
+        Texture* whiteTexture;
 
         Renderer::QuadVertex* quadVertexBufferPtr = nullptr;
         Renderer::QuadVertex* quadVertexBufferBase = nullptr;

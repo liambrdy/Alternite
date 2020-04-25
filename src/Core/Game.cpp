@@ -7,10 +7,12 @@
 
 Game::Game()
 {
+    m_texture = new Texture("assets/textures/Grid.png");
 }
 
 Game::~Game()
 {
+    delete m_texture;
 }
 
 Scene* Game::OnUpdate(double delta)
@@ -32,4 +34,6 @@ void Game::OnRender() const
             glm::vec4 color = { (float)x / 1600.0f, 0.3f, (float)y / 1200.0f, 1.0f };
             Renderer::DrawQuad({ x, y }, { 19.0f, 19.0f }, color);
         }
+
+    Renderer::DrawQuad({ 0.0f, 0.0f }, { 400.0f, 400.0f }, m_texture);
 }

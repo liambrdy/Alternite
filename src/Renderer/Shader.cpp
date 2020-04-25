@@ -216,7 +216,10 @@ int32_t Shader::GetUniformLocation(const std::string& name)
     else 
     {
         int32_t location = glGetUniformLocation(m_rendererID, name.c_str());
-        ASSERT(location != -1, "Failed to find uniform location: {0}", name);
+        if (location == -1)
+        {
+            LOG_ERROR("Failed to find uniform location: {0}", name);
+        }
         m_uniformLocations[name] = location;
         return location;
     }

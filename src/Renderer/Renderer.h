@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 
 #include <glm/glm.hpp>
 
@@ -19,6 +20,7 @@ public:
     static void EndFrame();
 
     static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
+    static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, Texture* texture, float tiling = 1.0f, glm::vec4 tint = glm::vec4(1.0f));
 private:
     static void FlushAndReset();
 
@@ -29,17 +31,23 @@ private:
         glm::vec2 position;
         glm::vec4 color;
         glm::vec2 uvCoord;
+        float texIndex;
+        float tilingFactor;
     };
 
     struct RenderData
     {
-        static const int MaxQuads = 20000;
-        static const int MaxVertices = MaxQuads * 4;
-        static const int MaxIndices = MaxQuads * 6;
+        static const uint32_t MaxQuads = 20000;
+        static const uint32_t MaxVertices = MaxQuads * 4;
+        static const uint32_t MaxIndices = MaxQuads * 6;
+        static const uint32_t MaxTextureSlots = 32;
 
         uint32_t quadVAO, quadVBO, quadEBO;
         Shader* shader;
         Texture* whiteTexture;
+        
+        std::array<Texture*, MaxTextureSlots> textureSlots;
+        uint32_t textureSlotIndex = 1;
 
         Renderer::QuadVertex* quadVertexBufferPtr = nullptr;
         Renderer::QuadVertex* quadVertexBufferBase = nullptr;

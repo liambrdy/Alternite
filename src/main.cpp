@@ -15,10 +15,10 @@ int main()
 {
     Logger::Init();
 
-    Scene* scene = new Game();
     Window window(width, height);
-
     Renderer::Init(width, height);
+
+    Scene* scene = new Game();
 
     double time = glfwGetTime();
 

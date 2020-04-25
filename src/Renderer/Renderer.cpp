@@ -77,9 +77,11 @@ void Renderer::Init(uint32_t width, uint32_t height)
     glBindBuffer(GL_ARRAY_BUFFER, s_data.quadVBO);
     glBufferData(GL_ARRAY_BUFFER, s_data.MaxVertices * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
-    SetBufferAttributeLayout(0, 2, 8, 0);
-    SetBufferAttributeLayout(1, 4, 8, 2);
-    SetBufferAttributeLayout(2, 2, 8, 6);
+    SetBufferAttributeLayout(0, 2, 10, 0);
+    SetBufferAttributeLayout(1, 4, 10, 2);
+    SetBufferAttributeLayout(2, 2, 10, 6);
+    SetBufferAttributeLayout(3, 1, 10, 8);
+    SetBufferAttributeLayout(4, 1, 10, 9);
 
     uint32_t* quadIndices = new uint32_t[s_data.MaxIndices];
 
@@ -109,9 +111,15 @@ void Renderer::Init(uint32_t width, uint32_t height)
     uint32_t whiteTextureData = 0xffffffff;
     s_data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+    int32_t samplers[s_data.MaxTextureSlots];
+    for (int32_t i = 0; i < s_data.MaxTextureSlots; i++)
+        samplers[i] = i;
+
     s_data.shader = new Shader("assets/shaders/Quad.glsl");
     s_data.shader->Bind();
-    s_data.shader->SetInt("u_Texture", 0);
+    s_data.shader->SetIntArray("u_Textures", samplers, s_data.MaxTextureSlots);
+
+    s_data.textureSlots[0] = s_data.whiteTexture;
 
     // s_data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
     // s_data.quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
@@ -143,6 +151,8 @@ void Renderer::BeginFrame()
     s_data.quadVertexBufferPtr = s_data.quadVertexBufferBase;
     s_data.quadIndexCount = 0;
 
+    s_data.textureSlotIndex = 1;
+
     glDisable(GL_SCISSOR_TEST);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -159,7 +169,10 @@ void Renderer::EndFrame()
 
     glm::mat4 projectionMat = glm::ortho(0.0f, (float)s_width, 0.0f, (float)s_height, -1.f, 1.0f);
 
-    s_data.whiteTexture->Bind();
+    for (uint32_t i = 0; i < s_data.textureSlotIndex; i++)
+    {
+        s_data.textureSlots[i]->Bind(i);
+    }
 
     s_data.shader->Bind();
     s_data.shader->SetMat4("u_Projection", projectionMat);
@@ -191,6 +204,56 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::
         s_data.quadVertexBufferPtr->position = quadPositions[i];
         s_data.quadVertexBufferPtr->color = color;
         s_data.quadVertexBufferPtr->uvCoord = quadUVs[i];
+        s_data.quadVertexBufferPtr->texIndex = 0;
+        s_data.quadVertexBufferPtr->tilingFactor = 1.0f;
+
+        s_data.quadVertexBufferPtr++;
+    }
+
+    s_data.quadIndexCount += 6;
+}
+
+void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Texture* texture, float tiling, glm::vec4 tint)
+{
+    if (s_data.quadIndexCount >= s_data.MaxIndices)
+        FlushAndReset();
+
+    float textureIndex = 0.0f;
+    for (uint32_t i = 1; i < s_data.textureSlotIndex; i++)
+    {
+        if (*s_data.textureSlots[i] == *texture)
+        {
+            textureIndex = (float)i;
+            break;
+        }
+    }
+
+    if (textureIndex == 0.0f)
+    {
+        textureIndex = (float)s_data.textureSlotIndex;
+        s_data.textureSlots[s_data.textureSlotIndex] = texture;
+        s_data.textureSlotIndex++;
+    }
+
+    glm::vec2 quadPositions[4];
+    quadPositions[0] = { pos.x, pos.y };
+    quadPositions[1] = { pos.x + size.x, pos.y };
+    quadPositions[2] = { pos.x + size.x, pos.y + size.y };
+    quadPositions[3] = { pos.x, pos.y + size.y };
+
+    glm::vec2 quadUVs[4];
+    quadUVs[0] = { 0.0f, 0.0f };
+    quadUVs[1] = { 1.0f, 0.0f };
+    quadUVs[2] = { 1.0f, 1.0f };
+    quadUVs[3] = { 0.0f, 1.0f };
+
+    for (uint32_t i = 0; i < 4; i++)
+    {
+        s_data.quadVertexBufferPtr->position = quadPositions[i];
+        s_data.quadVertexBufferPtr->color = tint;
+        s_data.quadVertexBufferPtr->uvCoord = quadUVs[i];
+        s_data.quadVertexBufferPtr->texIndex = textureIndex;
+        s_data.quadVertexBufferPtr->tilingFactor = tiling;
 
         s_data.quadVertexBufferPtr++;
     }
@@ -204,6 +267,8 @@ void Renderer::FlushAndReset()
 
     s_data.quadVertexBufferPtr = s_data.quadVertexBufferBase;
     s_data.quadIndexCount = 0;
+    
+    s_data.textureSlotIndex = 1;
 }
 
 void Renderer::SetBufferAttributeLayout(uint32_t index, uint32_t size, uint32_t stride, uint32_t offset)

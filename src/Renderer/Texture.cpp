@@ -28,10 +28,10 @@ Texture::Texture(const std::string& filepath)
     glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
     glTextureStorage2D(m_rendererID, 1, m_internalFormat, m_width, m_height);
 
-    glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     glTextureSubImage2D(m_rendererID, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, pixels);
 
@@ -58,9 +58,9 @@ Texture::~Texture()
     glDeleteTextures(1, &m_rendererID);
 }
 
-void Texture::Bind()
+void Texture::Bind(uint32_t slot)
 {
-    glBindTexture(GL_TEXTURE_2D, m_rendererID);
+    glBindTextureUnit(slot, m_rendererID);
 }
 
 void Texture::SetData(void* data, uint32_t size)

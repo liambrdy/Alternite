@@ -12,12 +12,14 @@ public:
 
     virtual ~Texture();
 
-    void Bind();
+    void Bind(uint32_t slot = 0);
 
     void SetData(void* data, uint32_t size);
 
     uint32_t GetWidth() const { return m_width; }
     uint32_t GetHeight() const { return m_height; }
+
+    bool operator==(const Texture& other) { return m_rendererID == other.m_rendererID; }
 private:
     uint32_t m_rendererID;
 

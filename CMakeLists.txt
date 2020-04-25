@@ -61,6 +61,7 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Core/Input.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Rendererable.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Font.cpp
@@ -74,6 +75,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Input.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Rendererable.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Font.h

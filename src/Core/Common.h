@@ -4,6 +4,8 @@
 
 #include <signal.h>
 
+#include <memory>
+
 #ifndef NDEBUG
     #define ASSERTS_ENABLED
 #endif
@@ -13,3 +15,6 @@
 #else
     #define ASSERT(x, ...)
 #endif
+
+template <typename T>
+using Ref = std::shared_ptr<T>;

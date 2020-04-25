@@ -7,12 +7,11 @@
 
 Game::Game()
 {
-    m_texture = new Texture("assets/textures/Grid.png");
+    m_texture = std::make_shared<Texture>("assets/textures/Grid.png");
 }
 
 Game::~Game()
 {
-    delete m_texture;
 }
 
 Scene* Game::OnUpdate(double delta)

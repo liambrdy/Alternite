@@ -4,6 +4,7 @@
 #include "Core/Common.h"
 
 #include "Renderer/Texture.h"
+#include "Renderer/Font.h"
 
 class Game : public Scene
 {
@@ -15,4 +16,5 @@ public:
     virtual void OnRender() const override;
 private:
     Ref<Texture> m_texture;
+    Ref<Font> m_font;
 };

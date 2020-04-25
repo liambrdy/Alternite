@@ -7,6 +7,7 @@
 
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Font.h"
 
 #include "Core/Common.h"
 
@@ -22,7 +23,13 @@ public:
     static void EndFrame();
 
     static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
+    static void DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec4 color);
+
     static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture> texture, float tiling = 1.0f, glm::vec4 tint = glm::vec4(1.0f));
+    static void DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, Ref<Texture> texture, float tiling = 1.0f, glm::vec4 tint = glm::vec4(1.0f));
+
+    static void DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const glm::vec4& color = glm::vec4(1.0f));
+    static void DrawCharacter(const glm::vec2& pos, Character character, const glm::vec4& color);
 private:
     static void FlushAndReset();
 
@@ -35,6 +42,14 @@ private:
         glm::vec2 uvCoord;
         float texIndex;
         float tilingFactor;
+    };
+
+    struct TextVertex
+    {
+        glm::vec2 position;
+        glm::vec2 uvCoord;
+        glm::vec4 color;
+        float texIndex;
     };
 
     struct RenderData
@@ -51,10 +66,20 @@ private:
         std::array<Ref<Texture>, MaxTextureSlots> textureSlots;
         uint32_t textureSlotIndex = 1;
 
-        Renderer::QuadVertex* quadVertexBufferPtr = nullptr;
-        Renderer::QuadVertex* quadVertexBufferBase = nullptr;
+        QuadVertex* quadVertexBufferPtr = nullptr;
+        QuadVertex* quadVertexBufferBase = nullptr;
+
+        uint32_t textVAO, textVBO;
+        Ref<Shader> textShader;
+
+        TextVertex* textVertexBufferPtr = nullptr;
+        TextVertex* textVertexBufferBase = nullptr;
+
+        std::array<uint32_t, MaxTextureSlots> textTextureSlots;
+        uint32_t textTextureSlotIndex = 0;
 
         uint32_t quadIndexCount = 0;
+        uint32_t textIndexCount = 0;
     };
 
     static RenderData* s_data;

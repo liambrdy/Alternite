@@ -8,6 +8,7 @@
 Game::Game()
 {
     m_texture = std::make_shared<Texture>("assets/textures/Grid.png");
+    m_font = std::make_shared<Font>("assets/fonts/hack.ttf");
 }
 
 Game::~Game()
@@ -35,4 +36,6 @@ void Game::OnRender() const
         }
 
     Renderer::DrawQuad({ 0.0f, 0.0f }, { 400.0f, 400.0f }, m_texture);
+
+    Renderer::DrawText({ 5.0f, 500.0f }, "This is deffinitely more than 32 different characters", m_font, { 0.8f, 0.3f, 0.3f, 1.0f });
 }

@@ -48,6 +48,12 @@ CPMAddPackage(
     GIT_TAG 0.9.9.8
 )
 
+CPMAddPackage(
+    NAME freetype
+    GITHUB_REPOSITORY aseprite/freetype2
+    GIT_TAG VER-2-10-0
+)
+
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
@@ -57,6 +63,7 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Font.cpp
 )
 
 set (headers
@@ -69,6 +76,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Font.h
 )
 
 add_executable(Alternite ${sources})
@@ -83,12 +91,14 @@ target_link_libraries(Alternite
     PRIVATE glfw
     PRIVATE glad
     PRIVATE spdlog
+    PRIVATE freetype
 )
 
 target_include_directories(Alternite
     PRIVATE ${PROJECT_SOURCE_DIR}/src
     PRIVATE ${glfw_SOURCE_DIR}/include
     PRIVATE ${glad_BINARY_DIR}/include
+    PRIVATE ${freetype_SOURCE_DIR}/include
     PRIVATE ${spdlog_SOURCE_DIR}
     PRIVATE ${glm_SOURCE_DIR}
 )

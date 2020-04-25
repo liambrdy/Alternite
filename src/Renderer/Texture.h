@@ -19,7 +19,7 @@ public:
     uint32_t GetWidth() const { return m_width; }
     uint32_t GetHeight() const { return m_height; }
 
-    bool operator==(const Texture& other) { return m_rendererID == other.m_rendererID; }
+    bool operator==(const Texture& other) const { return m_rendererID == other.m_rendererID; }
 private:
     uint32_t m_rendererID;
 

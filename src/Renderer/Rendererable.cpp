@@ -13,8 +13,23 @@ static void SetBufferAttributeLayout(uint32_t index, uint32_t size, uint32_t str
     glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (const void*)(offset * sizeof(float)));
 }
 
+void Rendererable::BindFramebuffer()
+{
+    uint32_t framebuffer = m_layer - 1;
+
+    if (framebuffer == -1)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    else 
+    {
+        auto layers = Renderer::GetLayers();
+        layers[framebuffer]->Bind();
+    }
+}
+
 QuadRendererable::QuadRendererable()
 {
+    m_layer = 0;
+
     m_vertexBase = new QuadVertex[MaxQuadVertices];
 
     glCreateVertexArrays(1, &m_VAO);
@@ -128,7 +143,7 @@ void QuadRendererable::Reset()
 
 void QuadRendererable::Flush()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    BindFramebuffer();
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
@@ -147,10 +162,14 @@ void QuadRendererable::Flush()
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 TextRendererable::TextRendererable()
 {
+    m_layer = 1;
+
     m_vertexBase = new TextVertex[MaxTextVertices];
 
     glCreateVertexArrays(1, &m_VAO);
@@ -257,7 +276,7 @@ void TextRendererable::Reset()
 
 void TextRendererable::Flush()
 {
-    Renderer::GetGuiFramebuffer()->Bind();
+    BindFramebuffer();
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
@@ -277,5 +296,5 @@ void TextRendererable::Flush()
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 
-    Renderer::GetGuiFramebuffer()->Unbind();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

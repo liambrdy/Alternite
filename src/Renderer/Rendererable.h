@@ -14,10 +14,14 @@ public:
 
     virtual void Reset() = 0;
     virtual void Flush() = 0;
+
+    virtual void BindFramebuffer();
 protected:
     uint32_t m_VAO, m_VBO, m_EBO;
 
     uint32_t m_indexCount;
+
+    uint32_t m_layer;
 
     Ref<Shader> m_shader;
 

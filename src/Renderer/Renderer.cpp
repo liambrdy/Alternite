@@ -6,7 +6,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Renderer::RenderData* Renderer::s_data;
+Renderer::RenderData* Renderer::s_data = nullptr;
 uint32_t Renderer::s_width;
 uint32_t Renderer::s_height;
 
@@ -40,7 +40,7 @@ void Renderer::Init(uint32_t width, uint32_t height)
     glGetIntegerv(GL_MAJOR_VERSION, &major);
     glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-    LOG_INFO("OpenGL {0}.{1}", major, minor);
+    LOG_INFO("OpenGL Version {0}.{1}", major, minor);
 
     s_width = width;
     s_height = height;
@@ -58,10 +58,11 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     s_data = new RenderData();
 
+    for (auto& layer : s_data->layers)
+        layer = std::make_shared<Framebuffer>(width, height);
+
     s_data->quadRenderer = std::make_shared<QuadRendererable>();
     s_data->textRenderer = std::make_shared<TextRendererable>();
-
-    s_data->guiFramebuffer = std::make_shared<Framebuffer>(width, height);
 
     s_data->fboShader = std::make_shared<Shader>("assets/shaders/FBO.glsl");
 
@@ -102,11 +103,14 @@ void Renderer::EndFrame()
 
     s_data->fboShader->Bind();
     s_data->fboShader->SetInt("u_Texture", 0);
-    s_data->guiFramebuffer->BindTexture();
 
-    glBindVertexArray(s_data->fboVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
+    for (int i = s_data->layers.size() - 1; i >= 0; i--)
+    {
+        s_data->layers[i]->BindTexture();
+        glBindVertexArray(s_data->fboVAO);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+    }
 }
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)

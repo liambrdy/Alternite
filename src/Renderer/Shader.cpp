@@ -211,7 +211,7 @@ void Shader::Compile(const std::unordered_map<GLenum, std::string>& shaderSource
 
 int32_t Shader::GetUniformLocation(const std::string& name)
 {
-    if (m_uniformLocations.contains(name))
+    if (m_uniformLocations.find(name) != m_uniformLocations.end())
         return m_uniformLocations[name];
     else 
     {

@@ -84,7 +84,7 @@ set (headers
 add_executable(Alternite ${sources})
 set_target_properties(Alternite
     PROPERTIES
-    CXX_STANDARD 20
+    CXX_STANDARD 17
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
     OUTPUT_NAME "main"
 )

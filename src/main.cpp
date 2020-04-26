@@ -28,7 +28,7 @@ int main()
         double currentTime = glfwGetTime();
         scene = scene->OnUpdate(currentTime - time);
         if (!scene)
-            return 0;
+            break;
         time = currentTime;
 
         Renderer::BeginFrame();

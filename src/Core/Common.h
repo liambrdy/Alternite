@@ -16,6 +16,8 @@
     #define ASSERT(x, ...)
 #endif
 
+#define BIT(x) (1 << x)
+
 template <typename T>
 using Ref = std::shared_ptr<T>;
 

@@ -8,6 +8,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Font.h"
+#include "Renderer/Framebuffer.h"
 
 #include "Renderer/Rendererable.h"
 
@@ -32,11 +33,18 @@ public:
 
     static void DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const glm::vec4& color = glm::vec4(1.0f));
     static void DrawCharacter(const glm::vec2& pos, Character character, const glm::vec4& color);
+
+    static Ref<Framebuffer> GetGuiFramebuffer() { return s_data->guiFramebuffer; }
 private:
     struct RenderData
     {
+        Ref<Framebuffer> guiFramebuffer;
+
         Ref<QuadRendererable> quadRenderer;
         Ref<TextRendererable> textRenderer;
+        
+        uint32_t fboVAO;
+        Ref<Shader> fboShader;
     };
 
     static RenderData* s_data;

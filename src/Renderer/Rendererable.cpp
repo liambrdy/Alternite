@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Renderer/Renderer.h"
+
 static void SetBufferAttributeLayout(uint32_t index, uint32_t size, uint32_t stride, uint32_t offset)
 {
     glEnableVertexAttribArray(index);
@@ -126,6 +128,8 @@ void QuadRendererable::Reset()
 
 void QuadRendererable::Flush()
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
@@ -253,6 +257,8 @@ void TextRendererable::Reset()
 
 void TextRendererable::Flush()
 {
+    Renderer::GetGuiFramebuffer()->Bind();
+
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
@@ -270,4 +276,6 @@ void TextRendererable::Flush()
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+
+    Renderer::GetGuiFramebuffer()->Unbind();
 }

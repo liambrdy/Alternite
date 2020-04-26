@@ -60,6 +60,12 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     s_data->quadRenderer = std::make_shared<QuadRendererable>();
     s_data->textRenderer = std::make_shared<TextRendererable>();
+
+    s_data->guiFramebuffer = std::make_shared<Framebuffer>(width, height);
+
+    s_data->fboShader = std::make_shared<Shader>("assets/shaders/FBO.glsl");
+
+    glCreateVertexArrays(1, &s_data->fboVAO);
 }
 
 void Renderer::Shutdown()
@@ -72,6 +78,8 @@ void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     s_width = width;
     s_height = height;
     glViewport(0, 0, width, height);
+
+    s_data->guiFramebuffer->Resize(width, height);
 }
 
 void Renderer::BeginFrame()
@@ -91,6 +99,14 @@ void Renderer::EndFrame()
 
     s_data->quadRenderer->Flush();
     s_data->textRenderer->Flush();
+
+    s_data->fboShader->Bind();
+    s_data->fboShader->SetInt("u_Texture", 0);
+    s_data->guiFramebuffer->BindTexture();
+
+    glBindVertexArray(s_data->fboVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 }
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)

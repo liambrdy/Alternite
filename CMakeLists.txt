@@ -65,6 +65,7 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Font.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.cpp
 )
 
 set (headers
@@ -79,6 +80,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Font.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.h
 )
 
 add_executable(Alternite ${sources})

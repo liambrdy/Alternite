@@ -21,7 +21,7 @@ protected:
 
     uint32_t m_indexCount;
 
-    uint32_t m_layer;
+    int32_t m_layer;
 
     Ref<Shader> m_shader;
 

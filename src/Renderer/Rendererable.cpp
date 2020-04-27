@@ -15,20 +15,18 @@ static void SetBufferAttributeLayout(uint32_t index, uint32_t size, uint32_t str
 
 void Rendererable::BindFramebuffer()
 {
-    uint32_t framebuffer = m_layer - 1;
-
-    if (framebuffer == -1)
+    if (m_layer == 0)
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    else 
+    else
     {
         auto layers = Renderer::GetLayers();
-        layers[framebuffer]->Bind();
+        layers[m_layer - 1]->Bind();
     }
 }
 
 QuadRendererable::QuadRendererable()
 {
-    m_layer = 0;
+    m_layer = static_cast<uint32_t>(Renderer::LAYER_game);
 
     m_vertexBase = new QuadVertex[MaxQuadVertices];
 
@@ -168,7 +166,7 @@ void QuadRendererable::Flush()
 
 TextRendererable::TextRendererable()
 {
-    m_layer = 1;
+    m_layer = static_cast<uint32_t>(Renderer::LAYER_gui);
 
     m_vertexBase = new TextVertex[MaxTextVertices];
 

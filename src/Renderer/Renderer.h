@@ -34,12 +34,19 @@ public:
     static void DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const glm::vec4& color = glm::vec4(1.0f));
     static void DrawCharacter(const glm::vec2& pos, Character character, const glm::vec4& color);
 
-    static std::array<Ref<Framebuffer>, 1> GetLayers() { return s_data->layers; }
+    enum Layer
+    {
+        LAYER_game = 0,
+        LAYER_gui,
+        LAYER_MAX
+    };
+
+    static std::array<Ref<Framebuffer>, LAYER_MAX - 1> GetLayers() { return s_data->layers; }
 private:
     struct RenderData
     {
         Ref<Framebuffer> guiFramebuffer;
-        std::array<Ref<Framebuffer>, 1> layers;
+        std::array<Ref<Framebuffer>, LAYER_MAX - 1> layers;
 
         Ref<QuadRendererable> quadRenderer;
         Ref<TextRendererable> textRenderer;

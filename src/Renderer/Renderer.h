@@ -7,7 +7,7 @@
 
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
-#include "Renderer/Font.h"
+#include "Renderer/Text/Font.h"
 #include "Renderer/Framebuffer.h"
 
 #include "Renderer/Rendererable.h"

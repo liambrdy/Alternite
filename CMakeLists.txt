@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(Alternite
     VERSION 0.1
-    LANGUAGES CXX
+    LANGUAGES CXX C
 )
 
 if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
@@ -54,17 +54,6 @@ CPMAddPackage(
     GIT_TAG VER-2-10-0
 )
 
-CPMAddPackage(
-    NAME freetype-gl
-    GITHUB_REPOSITORY rougier/freetype-gl
-    GIT_TAG master
-    OPTIONS
-        "freetype-gl_BUILD_DEMOS OFF"
-        "freetype-gl_BUILD_TESTS OFF"
-        "freetype-gl_BUILD_APIDOC OFF"
-        "freetype-gl_BUILD_MAKEFONT OFF"
-)
-
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
@@ -75,8 +64,16 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Renderer/Rendererable.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.cpp
-    ${PROJECT_SOURCE_DIR}/src/Renderer/Font.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/Font.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/distance-field.c
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/edtaa3func.c
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/texture-atlas.c
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/texture-font.c
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/utf8-utils.c
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/vector.c
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/platform.c
 )
 
 set (headers
@@ -90,8 +87,16 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Renderer/Rendererable.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.h
-    ${PROJECT_SOURCE_DIR}/src/Renderer/Font.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/Font.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/distance-field.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/edtaa3func.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/texture-atlas.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/texture-font.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/utf8-utils.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/vector.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/vec234.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Text/platform.h
 )
 
 add_executable(Alternite ${sources})
@@ -106,7 +111,6 @@ target_link_libraries(Alternite
     PRIVATE glfw
     PRIVATE glad
     PRIVATE spdlog
-    PRIVATE freetype-gl
     PRIVATE freetype
 )
 
@@ -117,7 +121,6 @@ target_include_directories(Alternite
     PRIVATE ${freetype_SOURCE_DIR}/include
     PRIVATE ${spdlog_SOURCE_DIR}
     PRIVATE ${glm_SOURCE_DIR}
-    PRIVATE ${freetype-gl_SOURCE_DIR}
 )
 
 target_compile_definitions(Alternite

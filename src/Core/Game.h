@@ -4,7 +4,7 @@
 #include "Core/Common.h"
 
 #include "Renderer/Texture.h"
-#include "Renderer/Font.h"
+#include "Renderer/Text/Font.h"
 
 class Game : public Scene
 {

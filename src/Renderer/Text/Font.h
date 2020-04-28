@@ -6,8 +6,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <texture-font.h>
-#include <texture-atlas.h>
+#include "Renderer/Text/texture-font.h"
+#include "Renderer/Text/texture-atlas.h"
 
 #include "Core/Common.h"
 

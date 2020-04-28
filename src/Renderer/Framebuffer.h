@@ -15,6 +15,8 @@ public:
     void Bind() const;
     void Unbind() const;
 
+    void Clear(float r, float g, float b, float a) const;
+
     void BindTexture(uint32_t slot = 0) const;
 
     uint32_t GetWidth() const { return m_width; }

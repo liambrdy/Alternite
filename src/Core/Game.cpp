@@ -37,5 +37,5 @@ void Game::OnRender() const
 
     Renderer::DrawQuad({ 0.0f, 0.0f }, { 400.0f, 400.0f }, m_texture);
 
-    Renderer::DrawText({ 5.0f, 500.0f }, "asdfghjklASDFGHJKLqwertyuiopQWERTYUIOP", m_font);
+    Renderer::DrawText({ 0.5f, 500.0f }, "WOW! Very cool text rendering!", m_font, 1.0f);
 }

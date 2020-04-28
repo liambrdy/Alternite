@@ -54,6 +54,17 @@ CPMAddPackage(
     GIT_TAG VER-2-10-0
 )
 
+CPMAddPackage(
+    NAME freetype-gl
+    GITHUB_REPOSITORY rougier/freetype-gl
+    GIT_TAG master
+    OPTIONS
+        "freetype-gl_BUILD_DEMOS OFF"
+        "freetype-gl_BUILD_TESTS OFF"
+        "freetype-gl_BUILD_APIDOC OFF"
+        "freetype-gl_BUILD_MAKEFONT OFF"
+)
+
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
@@ -95,6 +106,7 @@ target_link_libraries(Alternite
     PRIVATE glfw
     PRIVATE glad
     PRIVATE spdlog
+    PRIVATE freetype-gl
     PRIVATE freetype
 )
 
@@ -105,6 +117,7 @@ target_include_directories(Alternite
     PRIVATE ${freetype_SOURCE_DIR}/include
     PRIVATE ${spdlog_SOURCE_DIR}
     PRIVATE ${glm_SOURCE_DIR}
+    PRIVATE ${freetype-gl_SOURCE_DIR}
 )
 
 target_compile_definitions(Alternite

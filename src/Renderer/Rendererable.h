@@ -2,6 +2,7 @@
 
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Font.h"
 
 #include "Core/Common.h"
 
@@ -74,7 +75,6 @@ struct TextVertex
         glm::vec2 position;
         glm::vec2 uvCoord;
         glm::vec4 color;
-        float texIndex;
     };
 
 class TextRendererable : public Rendererable
@@ -85,14 +85,14 @@ public:
 
     void AddData(TextVertex data);
 
-    float GetTextureIndex(uint32_t texture);
-
     virtual void Reset() override;
     virtual void Flush() override;
 
     void FlushAndReset() { Flush(); Reset(); }
 
     uint32_t GetIndexCount() const { return m_indexCount; }
+
+    void SetFont(Ref<Font> font) { m_font = font; }
 public:
     static const uint32_t MaxTexts = 20000;
     static const uint32_t MaxTextVertices = MaxTexts * 4;
@@ -101,9 +101,7 @@ private:
     TextVertex* m_vertexBase = nullptr;
     TextVertex* m_vertexPtr = nullptr;
 
+    Ref<Font> m_font;
+
     uint32_t m_vertexCount = 0;
-
-    std::array<uint32_t, 32> m_textureSlots;
-
-    uint32_t m_textureSlotIndex = 0;
 };

@@ -177,10 +177,9 @@ TextRendererable::TextRendererable()
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, MaxTextVertices * sizeof(TextVertex), nullptr, GL_DYNAMIC_DRAW);
 
-    SetBufferAttributeLayout(0, 2, 9, 0);
-    SetBufferAttributeLayout(1, 2, 9, 2);
-    SetBufferAttributeLayout(2, 4, 9, 4);
-    SetBufferAttributeLayout(3, 1, 9, 8);
+    SetBufferAttributeLayout(0, 2, 8, 0);
+    SetBufferAttributeLayout(1, 2, 8, 2);
+    SetBufferAttributeLayout(2, 4, 8, 4);
 
     uint32_t* textIndices = new uint32_t[MaxTextIndices];
 
@@ -203,15 +202,11 @@ TextRendererable::TextRendererable()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MaxTextIndices * sizeof(uint32_t), textIndices, GL_STATIC_DRAW);
 
     delete[] textIndices;
-    
-    int32_t samplers[MaxTextureSlots];
-    for (int32_t i = 0; i < MaxTextureSlots; i++)
-        samplers[i] = i;
 
     m_shader = std::make_shared<Shader>("assets/shaders/Text.glsl");
 
     m_shader->Bind();
-    m_shader->SetIntArray("u_Textures", samplers, MaxTextureSlots);
+    m_shader->SetInt("u_Texture", 0);
 
     glBindVertexArray(0);
 }
@@ -239,35 +234,9 @@ void TextRendererable::AddData(TextVertex data)
         m_vertexCount++;
 }
 
-float TextRendererable::GetTextureIndex(uint32_t texture)
-{
-    float textureIndex = -1.0f;
-    for (uint32_t i = 1; i < m_textureSlotIndex; i++)
-    {
-        if (m_textureSlots[i] == texture)
-        {
-            textureIndex = (float)i;
-            break;
-        }
-    }
-
-    if (textureIndex == -1.0f)
-    {
-        if (m_textureSlotIndex >= MaxTextureSlots)
-            FlushAndReset();
-
-        textureIndex = (float)m_textureSlotIndex;
-        m_textureSlots[m_textureSlotIndex] = texture;
-        m_textureSlotIndex++;
-    }
-    
-    return textureIndex;
-}
-
 void TextRendererable::Reset()
 {
     m_indexCount = 0;
-    m_textureSlotIndex = 0;
 
     m_vertexPtr = m_vertexBase;
 }
@@ -282,10 +251,7 @@ void TextRendererable::Flush()
 
     glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
 
-    for (uint32_t i = 0; i < m_textureSlotIndex; i++)
-    {
-        glBindTextureUnit(i, m_textureSlots[i]);
-    }
+    m_font->BindTexture();
 
     m_shader->Bind();
     m_shader->SetMat4("u_Projection", projection);

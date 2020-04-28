@@ -6,15 +6,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <glm/glm.hpp>
+#include <texture-font.h>
+#include <texture-atlas.h>
 
-struct Character
-{
-    uint32_t texID;
-    glm::ivec2 size;
-    glm::ivec2 bearing;
-    FT_Pos advance;
-};
+#include "Core/Common.h"
 
 class Font
 {
@@ -22,10 +17,16 @@ public:
     Font(const std::string& filepath);
     virtual ~Font();
 
-    Character GetCharacter(char c) { return m_characters[c]; }
-private:
-    FT_Library m_ft;
-    FT_Face m_face;
+    ftgl::texture_glyph_t* GetCharacter(const char* codepoint);
 
-    std::map<char, Character> m_characters;
+    void BindTexture() const;
+
+    void RecreateTexture();
+
+    ftgl::texture_atlas_t* GetAtlas() const { return m_atlas; }
+private:
+    ftgl::texture_font_t* m_font;
+    ftgl::texture_atlas_t* m_atlas;
+
+    uint32_t m_texture;
 };

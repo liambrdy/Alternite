@@ -56,6 +56,13 @@ void Framebuffer::Unbind() const
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void Framebuffer::Clear(float r, float g, float b, float a) const
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
+    glClearColor(r, g, b, a);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 void Framebuffer::BindTexture(uint32_t slot) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);

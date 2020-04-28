@@ -4,11 +4,9 @@
 layout (location = 0) in vec2 a_Position;
 layout (location = 1) in vec2 a_TexCoord;
 layout (location = 2) in vec4 a_Color;
-layout (location = 3) in float a_TexIndex;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
-out float v_TexIndex;
 
 uniform mat4 u_Projection;
 
@@ -17,7 +15,6 @@ void main()
     gl_Position = u_Projection * vec4(a_Position.x, a_Position.y, 0.0, 1.0);
     v_Color = a_Color;
     v_TexCoord = a_TexCoord;
-    v_TexIndex = a_TexIndex;
 }
 
 //type fragment
@@ -27,13 +24,17 @@ layout (location = 0) out vec4 color;
 
 in vec4 v_Color;
 in vec2 v_TexCoord;
-in float v_TexIndex;
-in float v_TilingFactor;
 
-uniform sampler2D u_Textures[32];
+uniform sampler2D u_Texture;
+
+const float glyphCenter = 0.5;
 
 void main()
 {
-    vec4 sampled = vec4(1, 1, 1, texture2D(u_Textures[int(v_TexIndex)], v_TexCoord).r);
-    color = v_Color * sampled;
+    vec4 sampled = texture2D(u_Texture, v_TexCoord);
+    float dist = sampled.r;
+    float width = fwidth(dist);
+    float alpha = smoothstep(glyphCenter - width, glyphCenter + width, dist);
+
+    color = vec4(v_Color.xyz, alpha);
 }

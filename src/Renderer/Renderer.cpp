@@ -54,6 +54,8 @@ void Renderer::Init(uint32_t width, uint32_t height)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glEnable(GL_SCISSOR_TEST);
+
     glViewport(0, 0, width, height);
 
     s_data = new RenderData();
@@ -88,14 +90,12 @@ void Renderer::BeginFrame()
     s_data->quadRenderer->Reset();
     s_data->textRenderer->Reset();
 
-    glDisable(GL_SCISSOR_TEST);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Renderer::EndFrame()
 {
-    glEnable(GL_SCISSOR_TEST);
     glScissor(0, 0, s_width, s_height);
 
     s_data->quadRenderer->Flush();
@@ -196,51 +196,67 @@ void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
     }
 }
 
-void Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const glm::vec4& color)
+void Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const float scale, const glm::vec4& color)
 {
     glm::vec2 currentPos = pos;
+    
+    s_data->textRenderer->SetFont(font);
 
-    for (int i = 0; i < text.length(); i++)
+    char* curChar = (char*)text.c_str();
+    char* prevChar = nullptr;
+
+    DrawCharacter(currentPos, font, curChar, prevChar, scale, color);
+    prevChar = curChar;
+
+    for (int i = 1; i < text.length(); i++)
     {
-        Character c = font->GetCharacter(text[i]);
-
-        DrawCharacter(currentPos, c, color);
-
-        currentPos.x += (c.advance >> 6);
+        curChar = (char*)text.c_str() + i;
+        DrawCharacter(currentPos, font, curChar, prevChar, scale, color);
+        prevChar = curChar;
     }
 }
 
-void Renderer::DrawCharacter(const glm::vec2& pos, Character c, const glm::vec4& color)
+void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, const char* prev, const float scale, const glm::vec4& color)
 {
     if (s_data->textRenderer->GetIndexCount() >= TextRendererable::MaxTextIndices)
         s_data->textRenderer->FlushAndReset();
 
-    float textureIndex = s_data->textRenderer->GetTextureIndex(c.texID);
+    auto glyph = font->GetCharacter(curr);
+    if (prev)
+    {
+        pos.x += ftgl::texture_glyph_get_kerning(glyph, prev);
+    }
 
-    float xPos = pos.x + c.bearing.x;
-    float yPos = pos.y - (c.size.y - c.bearing.y);
+    float x0 = pos.x + glyph->offset_x;
+    float y0 = pos.y + glyph->offset_y;
+    float x1 = x0 + glyph->width;
+    float y1 = y0 - glyph->height;
+
+    float scaledHeight = glyph->offset_y * scale;
 
     glm::vec2 quadPositions[4];
-    quadPositions[0] = { xPos, yPos + c.size.y };
-    quadPositions[1] = { xPos + c.size.x, yPos + c.size.y };
-    quadPositions[2] = { xPos + c.size.x, yPos };
-    quadPositions[3] = { xPos, yPos };
+    quadPositions[0] = { x0, y0 };
+    quadPositions[1] = { x0, y1 };
+    quadPositions[2] = { x1, y1 };
+    quadPositions[3] = { x1, y0 };
 
     glm::vec2 quadUVs[4];
-    quadUVs[0] = { 0.0f, 0.0f };
-    quadUVs[1] = { 1.0f, 0.0f };
-    quadUVs[2] = { 1.0f, 1.0f };
-    quadUVs[3] = { 0.0f, 1.0f };    
+    quadUVs[0] = { glyph->s0, glyph->t0 };
+    quadUVs[1] = { glyph->s0, glyph->t1 };
+    quadUVs[2] = { glyph->s1, glyph->t1 };
+    quadUVs[3] = { glyph->s1, glyph->t0 };
 
     for (uint32_t i = 0; i < 4; i++)
     {
         TextVertex vertex;
 
-        vertex.position = quadPositions[i];
+        vertex.position = quadPositions[i] * scale;
         vertex.color = color;
         vertex.uvCoord = quadUVs[i];
-        vertex.texIndex = textureIndex;
 
         s_data->textRenderer->AddData(vertex);
     }
+
+    pos.x += glyph->advance_x;
+    // pos.y += glyph->advance_y;
 }

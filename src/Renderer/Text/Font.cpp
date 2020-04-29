@@ -4,14 +4,18 @@
 
 #include <glad/glad.h>
 
-Font::Font(const std::string& filepath)
+Font::Font(const std::string& filepath, int flags)
+    : m_flags(flags)
 {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     m_atlas = ftgl::texture_atlas_new(512, 512, 1);
 
     m_font = ftgl::texture_font_new_from_file(m_atlas, 72, filepath.c_str());
-    m_font->rendermode = ftgl::RENDER_SIGNED_DISTANCE_FIELD;
+    if (m_flags & FONT_NORMAL)
+        m_font->rendermode = ftgl::RENDER_NORMAL;
+    else if (m_flags & FONT_SIGNED_DISTANCE)
+        m_font->rendermode = ftgl::RENDER_SIGNED_DISTANCE_FIELD;
 
     for (GLubyte c = 32; c < 127; c++)
     {
@@ -43,9 +47,9 @@ ftgl::texture_glyph_t* Font::GetCharacter(const char* codepoint)
     return ftgl::texture_font_find_glyph(m_font, codepoint);
 }
 
-void Font::BindTexture() const
+void Font::BindTexture(int slot) const
 {
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glBindTextureUnit(slot, m_texture);
 }
 
 void Font::RecreateTexture()

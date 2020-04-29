@@ -71,11 +71,13 @@ private:
 };
 
 struct TextVertex
-    {
-        glm::vec2 position;
-        glm::vec2 uvCoord;
-        glm::vec4 color;
-    };
+{
+    glm::vec2 position;
+    glm::vec2 uvCoord;
+    glm::vec4 color;
+    float texIndex;
+    float renderMode;
+};
 
 class TextRendererable : public Rendererable
 {
@@ -88,11 +90,11 @@ public:
     virtual void Reset() override;
     virtual void Flush() override;
 
+    float GetTextureIndex(Ref<Font> font);
+
     void FlushAndReset() { Flush(); Reset(); }
 
     uint32_t GetIndexCount() const { return m_indexCount; }
-
-    void SetFont(Ref<Font> font) { m_font = font; }
 public:
     static const uint32_t MaxTexts = 20000;
     static const uint32_t MaxTextVertices = MaxTexts * 4;
@@ -101,7 +103,8 @@ private:
     TextVertex* m_vertexBase = nullptr;
     TextVertex* m_vertexPtr = nullptr;
 
-    Ref<Font> m_font;
+    uint32_t m_fontIndex;
+    std::array<Ref<Font>, 32> m_fonts;
 
     uint32_t m_vertexCount = 0;
 };

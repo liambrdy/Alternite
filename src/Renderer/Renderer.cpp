@@ -207,8 +207,6 @@ float Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font
 
     glm::vec2 currentPos = pos;
     glm::vec2 prevPos = pos;
-    
-    s_data->textRenderer->SetFont(font);
 
     char* curChar = (char*)text.c_str();
     char* prevChar = nullptr;
@@ -243,6 +241,8 @@ void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, c
         pos.x += ftgl::texture_glyph_get_kerning(glyph, prev);
     }
 
+    float textureIndex = s_data->textRenderer->GetTextureIndex(font);
+
     float x0 = pos.x + (glyph->offset_x * scale);
     float y0 = pos.y + (glyph->offset_y * scale);
     float x1 = x0 + (glyph->width * scale);
@@ -269,6 +269,8 @@ void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, c
         vertex.position = quadPositions[i];
         vertex.color = color;
         vertex.uvCoord = quadUVs[i];
+        vertex.texIndex = textureIndex;
+        vertex.renderMode = font->GetFlags() & FONT_NORMAL ? 0.0f : 1.0f;
 
         s_data->textRenderer->AddData(vertex);
     }

@@ -10,9 +10,11 @@
 Game::Game()
 {
     m_texture = std::make_shared<Texture>("assets/textures/Grid.png");
-    m_font = std::make_shared<Font>("assets/fonts/hack.ttf");
+    m_font = std::make_shared<Font>("assets/fonts/hack.ttf", FONT_SIGNED_DISTANCE);
+    m_anotherFont = std::make_shared<Font>("assets/fonts/EightBitDragon.ttf", FONT_NORMAL);
 
     m_titleWidth = m_font->GetTextWidth("ALTERNITE", 1.5f);
+    m_belowWidth = m_anotherFont->GetTextWidth("VERY COOL GAME", 1.0f);
 }
 
 Game::~Game()
@@ -42,6 +44,7 @@ void Game::OnRender() const
         }
 
     Renderer::DrawText({ 400.0f - (m_titleWidth / 2), 300.0f }, "ALTERNITE", m_font, 1.5f, { 0.0f, 0.0f, 0.0f, 1.0f });
+    Renderer::DrawText({ 400.0f - (m_belowWidth / 2), 200.0f }, "VERY COOL GAME", m_anotherFont, 1.0f);
 
     char str[100];
     snprintf(str, 100, "Frame Time: %f", m_delta);

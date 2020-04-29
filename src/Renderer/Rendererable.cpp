@@ -177,9 +177,11 @@ TextRendererable::TextRendererable()
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, MaxTextVertices * sizeof(TextVertex), nullptr, GL_DYNAMIC_DRAW);
 
-    SetBufferAttributeLayout(0, 2, 8, 0);
-    SetBufferAttributeLayout(1, 2, 8, 2);
-    SetBufferAttributeLayout(2, 4, 8, 4);
+    SetBufferAttributeLayout(0, 2, 10, 0);
+    SetBufferAttributeLayout(1, 2, 10, 2);
+    SetBufferAttributeLayout(2, 4, 10, 4);
+    SetBufferAttributeLayout(3, 1, 10, 8);
+    SetBufferAttributeLayout(4, 1, 10, 9);
 
     uint32_t* textIndices = new uint32_t[MaxTextIndices];
 
@@ -203,10 +205,13 @@ TextRendererable::TextRendererable()
 
     delete[] textIndices;
 
-    m_shader = std::make_shared<Shader>("assets/shaders/Text.glsl");
+    int32_t samplers[MaxTextureSlots];
+    for (int32_t i = 0; i < MaxTextureSlots; i++)
+        samplers[i] = i;
 
+    m_shader = std::make_shared<Shader>("assets/shaders/Text.glsl");
     m_shader->Bind();
-    m_shader->SetInt("u_Texture", 0);
+    m_shader->SetIntArray("u_Textures", samplers, MaxTextureSlots);
 
     glBindVertexArray(0);
 }
@@ -237,6 +242,7 @@ void TextRendererable::AddData(TextVertex data)
 void TextRendererable::Reset()
 {
     m_indexCount = 0;
+    m_fontIndex = 0;
 
     m_vertexPtr = m_vertexBase;
 }
@@ -251,7 +257,8 @@ void TextRendererable::Flush()
 
     glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
 
-    m_font->BindTexture();
+    for (int i = 0; i < m_fontIndex; i++)
+        m_fonts[i]->BindTexture(i);
 
     m_shader->Bind();
     m_shader->SetMat4("u_Projection", projection);
@@ -261,4 +268,29 @@ void TextRendererable::Flush()
     glBindVertexArray(0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+float TextRendererable::GetTextureIndex(Ref<Font> font)
+{
+    float textureIndex = -1.0f;
+    for (uint32_t i = 0; i < m_fontIndex; i++)
+    {
+        if (*m_fonts[i].get() == *font.get())
+        {
+            textureIndex = (float)i;
+            break;
+        }
+    }
+
+    if (textureIndex == -1.0f)
+    {
+        if (m_fontIndex >= MaxTextureSlots)
+            FlushAndReset();
+
+        textureIndex = (float)m_fontIndex;
+        m_fonts[m_fontIndex] = font;
+        m_fontIndex++;
+    }
+    
+    return textureIndex;
 }

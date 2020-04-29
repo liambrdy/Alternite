@@ -16,8 +16,8 @@ public:
     virtual void OnRender() const override;
 private:
     Ref<Texture> m_texture;
-    Ref<Font> m_font;
+    Ref<Font> m_font, m_anotherFont;
 
     float m_delta;
-    float m_titleWidth;
+    float m_titleWidth, m_belowWidth;
 };

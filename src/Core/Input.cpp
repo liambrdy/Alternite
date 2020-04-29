@@ -3,12 +3,13 @@
 #include <cstring>
 
 #include "Renderer/Renderer.h"
+#include "Renderer/Window.h"
 
 Input::InputData Input::s_data;
 
 void Input::Init(GLFWwindow* window_)
 {
-    memset(&s_data, 0, sizeof(Input::InputData));   
+    memset(&s_data, 0, sizeof(Input::InputData));
 
     glfwSetWindowUserPointer(window_, &s_data);
 
@@ -70,6 +71,7 @@ void Input::Init(GLFWwindow* window_)
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int width, int height)
     {
         Renderer::OnWindowResize(width, height);
+        Window::Get()->OnWindowResize(width, height);
     });
 }
 

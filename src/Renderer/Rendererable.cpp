@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Renderer/Renderer.h"
+#include "Renderer/Window.h"
 
 static void SetBufferAttributeLayout(uint32_t index, uint32_t size, uint32_t stride, uint32_t offset)
 {
@@ -147,7 +148,7 @@ void QuadRendererable::Flush()
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
 
-    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, (float)Window::Get()->GetWidth(), 0.0f, (float)Window::Get()->GetHeight(), -1.0f, 1.0f);
 
     for (uint32_t i = 0; i < m_textureSlotIndex; i++)
     {
@@ -254,8 +255,8 @@ void TextRendererable::Flush()
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
-
-    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
+    
+    glm::mat4 projection = glm::ortho(0.0f, (float)Window::Get()->GetWidth(), 0.0f, (float)Window::Get()->GetHeight(), -1.0f, 1.0f);
 
     for (int i = 0; i < m_fontIndex; i++)
         m_fonts[i]->BindTexture(i);

@@ -4,6 +4,7 @@
 #include "Core/Input.h"
 
 #include "Renderer/Renderer.h"
+#include "Renderer/Window.h"
 
 #include <cstring>
 
@@ -29,6 +30,12 @@ Scene* Game::OnUpdate(double delta)
         return nullptr;
     }
 
+    if (Input::IsKeyPressed(GLFW_KEY_SPACE))
+    {
+        WindowMode newMode = Window::Get()->GetWindowMode() == WindowMode::Windowed ? WindowMode::Fullscreen : WindowMode::Windowed;
+        Window::Get()->SetWindowMode(newMode);
+    }
+
     m_delta = delta;
 
     return this;
@@ -36,18 +43,18 @@ Scene* Game::OnUpdate(double delta)
 
 void Game::OnRender() const
 {
-    for (int y = 0; y < 600; y += 20)
-        for (int x = 0; x < 800; x += 20)
+    for (int y = 0; y < Window::Get()->GetHeight(); y += 20)
+        for (int x = 0; x < Window::Get()->GetWidth(); x += 20)
         {
-            glm::vec4 color = { (float)x / 1600.0f, 0.3f, (float)y / 1200.0f, 1.0f };
+            glm::vec4 color = { (float)x / (Window::Get()->GetWidth() * 2), 0.3f, (float)y / (Window::Get()->GetHeight() * 2), 1.0f };
             Renderer::DrawQuad({ x, y }, { 19.0f, 19.0f }, color);
         }
 
-    Renderer::DrawText({ 400.0f - (m_titleWidth / 2), 300.0f }, "ALTERNITE", m_font, 1.5f, { 0.0f, 0.0f, 0.0f, 1.0f });
-    Renderer::DrawText({ 400.0f - (m_belowWidth / 2), 200.0f }, "VERY COOL GAME", m_anotherFont, 1.0f);
+    Renderer::DrawText({ (Window::Get()->GetWidth() / 2) - (m_titleWidth / 2), Window::Get()->GetHeight() / 2 }, "ALTERNITE", m_font, 1.5f, { 0.0f, 0.0f, 0.0f, 1.0f });
+    Renderer::DrawText({ (Window::Get()->GetWidth() / 2) - (m_belowWidth / 2), 200.0f }, "VERY COOL GAME", m_anotherFont, 1.0f);
 
     char str[100];
     snprintf(str, 100, "Frame Time: %f", m_delta);
 
-    Renderer::DrawText({ 0.5f, 580.0f }, str, m_font, 0.3f);
+    Renderer::DrawText({ 0.5f, Window::Get()->GetHeight() - 50.0f }, str, m_font, 0.3f);
 }

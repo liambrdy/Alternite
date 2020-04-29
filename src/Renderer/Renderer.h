@@ -45,7 +45,6 @@ public:
 private:
     struct RenderData
     {
-        Ref<Framebuffer> guiFramebuffer;
         std::array<Ref<Framebuffer>, LAYER_MAX - 1> layers;
 
         Ref<QuadRendererable> quadRenderer;

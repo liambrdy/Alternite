@@ -84,7 +84,8 @@ void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     s_height = height;
     glViewport(0, 0, width, height);
 
-    s_data->guiFramebuffer->Resize(width, height);
+    for (auto& layer : s_data->layers)
+        layer->Resize(width, height);
 }
 
 void Renderer::BeginFrame()

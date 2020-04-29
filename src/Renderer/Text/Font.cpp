@@ -9,7 +9,7 @@ Font::Font(const std::string& filepath, int flags)
 {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    m_atlas = ftgl::texture_atlas_new(512, 512, 1);
+    m_atlas = ftgl::texture_atlas_new(550, 550, 1);
 
     m_font = ftgl::texture_font_new_from_file(m_atlas, 72, filepath.c_str());
     if (m_flags & FONT_NORMAL)

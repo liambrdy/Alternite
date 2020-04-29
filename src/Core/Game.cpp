@@ -56,5 +56,5 @@ void Game::OnRender() const
     char str[100];
     snprintf(str, 100, "Frame Time: %f", m_delta);
 
-    Renderer::DrawText({ 0.5f, Window::Get()->GetHeight() - 50.0f }, str, m_font, 0.3f);
+    Renderer::DrawText({ 0.5f, Window::Get()->GetHeight() - 20.0f }, str, m_font, 0.3f);
 }

@@ -67,6 +67,8 @@ void Renderer::Init(uint32_t width, uint32_t height)
     s_data->textRenderer = std::make_shared<TextRendererable>();
 
     s_data->fboShader = std::make_shared<Shader>("assets/shaders/FBO.glsl");
+    s_data->fboShader->Bind();
+    s_data->fboShader->SetInt("u_Texture", 0);
 
     glCreateVertexArrays(1, &s_data->fboVAO);
 }
@@ -92,6 +94,9 @@ void Renderer::BeginFrame()
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    for (auto& layer : s_data->layers)
+        layer->Clear(0, 0, 0, 0);
 }
 
 void Renderer::EndFrame()
@@ -102,7 +107,6 @@ void Renderer::EndFrame()
     s_data->textRenderer->Flush();
 
     s_data->fboShader->Bind();
-    s_data->fboShader->SetInt("u_Texture", 0);
 
     for (int i = s_data->layers.size() - 1; i >= 0; i--)
     {
@@ -196,9 +200,12 @@ void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
     }
 }
 
-void Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const float scale, const glm::vec4& color)
+float Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const float scale, const glm::vec4& color)
 {
+    float width = 0;
+
     glm::vec2 currentPos = pos;
+    glm::vec2 prevPos = pos;
     
     s_data->textRenderer->SetFont(font);
 
@@ -208,12 +215,20 @@ void Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font>
     DrawCharacter(currentPos, font, curChar, prevChar, scale, color);
     prevChar = curChar;
 
+    width += currentPos.x - prevPos.x;
+    prevPos = currentPos;
+
     for (int i = 1; i < text.length(); i++)
     {
         curChar = (char*)text.c_str() + i;
         DrawCharacter(currentPos, font, curChar, prevChar, scale, color);
         prevChar = curChar;
+
+        width += currentPos.x - prevPos.x;
+        prevPos = currentPos;
     }
+
+    return width;
 }
 
 void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, const char* prev, const float scale, const glm::vec4& color)

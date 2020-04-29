@@ -17,4 +17,7 @@ public:
 private:
     Ref<Texture> m_texture;
     Ref<Font> m_font;
+
+    float m_delta;
+    float m_titleWidth;
 };

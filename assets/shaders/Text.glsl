@@ -27,7 +27,7 @@ in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
 
-const float glyphCenter = 0.5;
+const float glyphCenter = 0.25;
 
 void main()
 {
@@ -37,4 +37,8 @@ void main()
     float alpha = smoothstep(glyphCenter - width, glyphCenter + width, dist);
 
     color = vec4(v_Color.xyz, alpha);
+    if (color.a < 0.02)
+    {
+        discard;
+    }
 }

@@ -24,7 +24,6 @@ int main()
 
     for (;;)
     {
-
         double currentTime = glfwGetTime();
         scene = scene->OnUpdate(currentTime - time);
         if (!scene)

@@ -23,6 +23,8 @@ public:
 
     void RecreateTexture();
 
+    float GetTextWidth(const std::string& text, float scale);
+
     ftgl::texture_atlas_t* GetAtlas() const { return m_atlas; }
 private:
     ftgl::texture_font_t* m_font;

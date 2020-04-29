@@ -53,3 +53,18 @@ void Font::RecreateTexture()
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_atlas->width, m_atlas->height, GL_RED, GL_UNSIGNED_BYTE, m_atlas->data);
 }
+
+float Font::GetTextWidth(const std::string& text, float scale)
+{
+    float width = 0;
+    for (int i = 0; i < text.size(); i++)
+    {
+        const char* codepoint = (char*)text.c_str() + i;
+
+        auto glyph = ftgl::texture_font_find_glyph(m_font, codepoint);
+
+        width += glyph->advance_x * scale;
+    }
+
+    return width;
+}

@@ -4,7 +4,7 @@
 
 Framebuffer::Framebuffer(uint32_t width, uint32_t height)
 {
-    Resize(width, height);
+    Resize(width, height, true);
 }
 
 Framebuffer::~Framebuffer()
@@ -13,7 +13,7 @@ Framebuffer::~Framebuffer()
     glDeleteTextures(1, &m_colorAttachment);
 }
 
-void Framebuffer::Resize(uint32_t width, uint32_t height)
+void Framebuffer::Resize(uint32_t width, uint32_t height, bool init)
 {
     if (width == m_width && height == m_height)
         return;
@@ -21,7 +21,7 @@ void Framebuffer::Resize(uint32_t width, uint32_t height)
     m_width = width;
     m_height = height;
 
-    if (m_rendererID)
+    if (!init)
     {
         glDeleteFramebuffers(1, &m_rendererID);
         glDeleteTextures(1, &m_colorAttachment);

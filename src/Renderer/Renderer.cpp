@@ -60,8 +60,10 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     s_data = new RenderData();
 
-    for (auto& layer : s_data->layers)
-        layer = std::make_shared<Framebuffer>(width, height);
+    for (int i = 0; i < s_data->layers.size(); i++)
+    {
+        s_data->layers[i] = std::make_shared<Framebuffer>(width, height);
+    }
 
     s_data->quadRenderer = std::make_shared<QuadRendererable>();
     s_data->textRenderer = std::make_shared<TextRendererable>();
@@ -84,8 +86,10 @@ void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     s_height = height;
     glViewport(0, 0, width, height);
 
-    for (auto& layer : s_data->layers)
-        layer->Resize(width, height);
+    for (int i = 0; i < s_data->layers.size(); i++)
+    {
+        s_data->layers[i]->Resize(width, height);
+    }
 }
 
 void Renderer::BeginFrame()

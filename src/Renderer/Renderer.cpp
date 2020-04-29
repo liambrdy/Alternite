@@ -227,10 +227,10 @@ void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, c
         pos.x += ftgl::texture_glyph_get_kerning(glyph, prev);
     }
 
-    float x0 = pos.x + glyph->offset_x;
-    float y0 = pos.y + glyph->offset_y;
-    float x1 = x0 + glyph->width;
-    float y1 = y0 - glyph->height;
+    float x0 = pos.x + (glyph->offset_x * scale);
+    float y0 = pos.y + (glyph->offset_y * scale);
+    float x1 = x0 + (glyph->width * scale);
+    float y1 = y0 - (glyph->height * scale);
 
     float scaledHeight = glyph->offset_y * scale;
 
@@ -250,13 +250,13 @@ void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, c
     {
         TextVertex vertex;
 
-        vertex.position = quadPositions[i] * scale;
+        vertex.position = quadPositions[i];
         vertex.color = color;
         vertex.uvCoord = quadUVs[i];
 
         s_data->textRenderer->AddData(vertex);
     }
 
-    pos.x += glyph->advance_x;
+    pos.x += glyph->advance_x * scale;
     // pos.y += glyph->advance_y;
 }

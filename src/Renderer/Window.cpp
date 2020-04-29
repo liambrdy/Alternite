@@ -16,6 +16,7 @@ Window::Window(uint32_t width, uint32_t height)
 
     m_data.width = width;
     m_data.height = height;
+    m_data.mode = WindowMode::Windowed;
 
     int res = glfwInit();
     ASSERT(res, "Failed to initialize GLFW");
@@ -116,7 +117,7 @@ void Window::SetWindowMode(const WindowMode& mode, uint32_t width, uint32_t heig
 
     glViewport(0, 0, width, height);
 
-    LOG_INFO("Changing window mode from {0} to {1}: [{2}, {3}]", m_data.mode, mode, width, height);
+    LOG_INFO("Changing window mode from {0} to {1}: [{2}, {3}]", m_data.mode == WindowMode::Windowed ? "Windowed" : "Fullscreen", mode == WindowMode::Windowed ? "Windowed" : "Fullscreen", width, height);
 
     m_data.mode = mode;
 

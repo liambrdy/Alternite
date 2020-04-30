@@ -12,11 +12,11 @@ out vec2 v_TexCoord;
 out float v_TexIndex;
 out float v_TilingFactor;
 
-uniform mat4 u_Projection;
+uniform mat4 u_ViewProjection;
 
 void main()
 {
-    gl_Position = u_Projection * vec4(a_Position.x, a_Position.y, 0.0, 1.0);
+    gl_Position = u_ViewProjection * vec4(a_Position.x, a_Position.y, 0.0, 1.0);
     v_Color = a_Color;
     v_TexCoord = a_TexCoord;
     v_TexIndex = a_TexIndex;

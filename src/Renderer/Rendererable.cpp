@@ -148,15 +148,13 @@ void QuadRendererable::Flush()
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
 
-    glm::mat4 projection = glm::ortho(0.0f, (float)Window::Get()->GetWidth(), 0.0f, (float)Window::Get()->GetHeight(), -1.0f, 1.0f);
-
     for (uint32_t i = 0; i < m_textureSlotIndex; i++)
     {
         m_textureSlots[i]->Bind(i);
     }
 
     m_shader->Bind();
-    m_shader->SetMat4("u_Projection", projection);
+    m_shader->SetMat4("u_ViewProjection", Renderer::GetCamera()->GetViewProjectionMatrix());
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
@@ -256,13 +254,11 @@ void TextRendererable::Flush()
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
     
-    glm::mat4 projection = glm::ortho(0.0f, (float)Window::Get()->GetWidth(), 0.0f, (float)Window::Get()->GetHeight(), -1.0f, 1.0f);
-
     for (int i = 0; i < m_fontIndex; i++)
         m_fonts[i]->BindTexture(i);
 
     m_shader->Bind();
-    m_shader->SetMat4("u_Projection", projection);
+    m_shader->SetMat4("u_Projection", Renderer::GetCamera()->GetProjectionMatrix());
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);

@@ -9,6 +9,7 @@
 Renderer::RenderData* Renderer::s_data = nullptr;
 uint32_t Renderer::s_width;
 uint32_t Renderer::s_height;
+Ref<Camera> Renderer::s_camera;
 
 #ifndef NDEBUG
 static APIENTRY void DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
@@ -73,6 +74,8 @@ void Renderer::Init(uint32_t width, uint32_t height)
     s_data->fboShader->SetInt("u_Texture", 0);
 
     glCreateVertexArrays(1, &s_data->fboVAO);
+
+    s_camera = std::make_shared<Camera>(0, width, 0, height);
 }
 
 void Renderer::Shutdown()
@@ -90,6 +93,8 @@ void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     {
         s_data->layers[i]->Resize(width, height);
     }
+
+    s_camera->SetProjection(0, width, 0, height);
 }
 
 void Renderer::BeginFrame()

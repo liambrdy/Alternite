@@ -66,6 +66,8 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.cpp
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Camera.cpp
+
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/Font.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/distance-field.c
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/edtaa3func.c
@@ -88,6 +90,8 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Renderer/Shader.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Texture.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Framebuffer.h
+    ${PROJECT_SOURCE_DIR}/src/Renderer/Camera.h
+
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/Font.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/distance-field.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/edtaa3func.h

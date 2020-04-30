@@ -9,6 +9,7 @@
 #include "Renderer/Texture.h"
 #include "Renderer/Text/Font.h"
 #include "Renderer/Framebuffer.h"
+#include "Renderer/Camera.h"
 
 #include "Renderer/Rendererable.h"
 
@@ -42,6 +43,8 @@ public:
     };
 
     static std::array<Ref<Framebuffer>, LAYER_MAX - 1> GetLayers() { return s_data->layers; }
+
+    static Ref<Camera> GetCamera() { return s_camera; }
 private:
     struct RenderData
     {
@@ -56,4 +59,5 @@ private:
 
     static RenderData* s_data;
     static uint32_t s_width, s_height;
+    static Ref<Camera> s_camera;
 };

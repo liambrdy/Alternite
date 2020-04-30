@@ -35,6 +35,28 @@ Scene* Game::OnUpdate(double delta)
         WindowMode newMode = Window::Get()->GetWindowMode() == WindowMode::Windowed ? WindowMode::Fullscreen : WindowMode::Windowed;
         Window::Get()->SetWindowMode(newMode);
     }
+    
+    if (Input::IsKeyDown(GLFW_KEY_A))
+    {
+        auto currentPos = Renderer::GetCamera()->GetPosition();
+        Renderer::GetCamera()->SetPosition({ currentPos.x - 200.0f * delta, currentPos.y });
+    }
+    else if (Input::IsKeyDown(GLFW_KEY_D))
+    {
+        auto currentPos = Renderer::GetCamera()->GetPosition();
+        Renderer::GetCamera()->SetPosition({ currentPos.x + 200.0f * delta, currentPos.y });
+    }
+
+    if (Input::IsKeyDown(GLFW_KEY_W))
+    {
+        auto currentPos = Renderer::GetCamera()->GetPosition();
+        Renderer::GetCamera()->SetPosition({ currentPos.x, currentPos.y + 200.0f * delta });
+    }
+    else if (Input::IsKeyDown(GLFW_KEY_S))
+    {
+        auto currentPos = Renderer::GetCamera()->GetPosition();
+        Renderer::GetCamera()->SetPosition({ currentPos.x, currentPos.y - 200.0f * delta });
+    }
 
     m_delta = delta;
 

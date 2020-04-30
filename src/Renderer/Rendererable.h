@@ -2,6 +2,7 @@
 
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Camera.h"
 #include "Renderer/Text/Font.h"
 
 #include "Core/Common.h"

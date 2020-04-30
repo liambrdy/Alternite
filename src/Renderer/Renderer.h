@@ -23,6 +23,8 @@ public:
 
     static void OnWindowResize(uint32_t width, uint32_t height);
 
+    static void SetRenderOrigin(const glm::vec2& pos) { glm::vec2 newPos = { pos.x - s_width / 2, pos.y - s_height / 2 } ; s_camera->SetPosition(newPos); }
+
     static void BeginFrame();
     static void EndFrame();
 

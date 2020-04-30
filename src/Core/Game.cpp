@@ -12,10 +12,9 @@ Game::Game()
 {
     m_texture = std::make_shared<Texture>("assets/textures/Grid.png");
     m_font = std::make_shared<Font>("assets/fonts/hack.ttf", FONT_SIGNED_DISTANCE);
-    m_anotherFont = std::make_shared<Font>("assets/fonts/EightBitDragon.ttf", FONT_NORMAL);
 
-    m_titleWidth = m_font->GetTextWidth("ALTERNITE", 1.5f);
-    m_belowWidth = m_anotherFont->GetTextWidth("VERY COOL GAME", 1.0f);
+    m_ground = std::make_shared<Texture>("assets/textures/Ground.png");
+    m_player = std::make_shared<Texture>("assets/textures/Character.png");
 }
 
 Game::~Game()
@@ -38,24 +37,20 @@ Scene* Game::OnUpdate(double delta)
     
     if (Input::IsKeyDown(GLFW_KEY_A))
     {
-        auto currentPos = Renderer::GetCamera()->GetPosition();
-        Renderer::GetCamera()->SetPosition({ currentPos.x - 200.0f * delta, currentPos.y });
+        m_pos.x -= 200.0f * delta;
     }
     else if (Input::IsKeyDown(GLFW_KEY_D))
     {
-        auto currentPos = Renderer::GetCamera()->GetPosition();
-        Renderer::GetCamera()->SetPosition({ currentPos.x + 200.0f * delta, currentPos.y });
+        m_pos.x += 200.0f * delta;
     }
 
     if (Input::IsKeyDown(GLFW_KEY_W))
     {
-        auto currentPos = Renderer::GetCamera()->GetPosition();
-        Renderer::GetCamera()->SetPosition({ currentPos.x, currentPos.y + 200.0f * delta });
+        m_pos.y += 200.0f * delta;
     }
     else if (Input::IsKeyDown(GLFW_KEY_S))
     {
-        auto currentPos = Renderer::GetCamera()->GetPosition();
-        Renderer::GetCamera()->SetPosition({ currentPos.x, currentPos.y - 200.0f * delta });
+        m_pos.y -= 200.0f * delta;
     }
 
     m_delta = delta;
@@ -65,18 +60,12 @@ Scene* Game::OnUpdate(double delta)
 
 void Game::OnRender() const
 {
-    for (int y = 0; y < Window::Get()->GetHeight(); y += 20)
-        for (int x = 0; x < Window::Get()->GetWidth(); x += 20)
-        {
-            glm::vec4 color = { (float)x / (Window::Get()->GetWidth() * 2), 0.3f, (float)y / (Window::Get()->GetHeight() * 2), 1.0f };
-            Renderer::DrawQuad({ x, y }, { 19.0f, 19.0f }, color);
-        }
+    Renderer::SetRenderOrigin(m_pos);
 
-    Renderer::DrawText({ (Window::Get()->GetWidth() / 2) - (m_titleWidth / 2), Window::Get()->GetHeight() / 2 }, "ALTERNITE", m_font, 1.5f, { 0.0f, 0.0f, 0.0f, 1.0f });
-    Renderer::DrawText({ (Window::Get()->GetWidth() / 2) - (m_belowWidth / 2), 200.0f }, "VERY COOL GAME", m_anotherFont, 1.0f);
+    Renderer::DrawQuad({ 0, 0 }, { 3000, 600 }, m_ground, 10.0f);
+    Renderer::DrawQuad(m_pos, { 19 * 4, 32 * 4 }, m_player);
 
     char str[100];
     snprintf(str, 100, "Frame Time: %f", m_delta);
-
     Renderer::DrawText({ 0.5f, Window::Get()->GetHeight() - 20.0f }, str, m_font, 0.3f);
 }

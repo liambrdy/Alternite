@@ -7,6 +7,8 @@
 
 Texture::Texture(const std::string& filepath)
 {
+    stbi_set_flip_vertically_on_load(1);
+
     int width, height, channels;
     stbi_uc* pixels = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
     ASSERT(pixels, "Failed to load texture: {0}", filepath);

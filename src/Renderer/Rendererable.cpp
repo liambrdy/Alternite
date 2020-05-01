@@ -14,21 +14,8 @@ static void SetBufferAttributeLayout(uint32_t index, uint32_t size, uint32_t str
     glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride * sizeof(float), (const void*)(offset * sizeof(float)));
 }
 
-void Rendererable::BindFramebuffer()
-{
-    if (m_layer == 0)
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    else
-    {
-        auto layers = Renderer::GetLayers();
-        layers[m_layer - 1]->Bind();
-    }
-}
-
 QuadRendererable::QuadRendererable()
 {
-    m_layer = static_cast<uint32_t>(Renderer::LAYER_game);
-
     m_vertexBase = new QuadVertex[MaxQuadVertices];
 
     glCreateVertexArrays(1, &m_VAO);
@@ -38,11 +25,10 @@ QuadRendererable::QuadRendererable()
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, MaxQuadVertices * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
-    SetBufferAttributeLayout(0, 2, 10, 0);
-    SetBufferAttributeLayout(1, 4, 10, 2);
-    SetBufferAttributeLayout(2, 2, 10, 6);
-    SetBufferAttributeLayout(3, 1, 10, 8);
-    SetBufferAttributeLayout(4, 1, 10, 9);
+    SetBufferAttributeLayout(0, 2, 8, 0);
+    SetBufferAttributeLayout(1, 4, 8, 2);
+    SetBufferAttributeLayout(2, 1, 8, 6);
+    SetBufferAttributeLayout(3, 1, 8, 7);
 
     uint32_t* quadIndices = new uint32_t[MaxQuadIndices];
 
@@ -142,8 +128,6 @@ void QuadRendererable::Reset()
 
 void QuadRendererable::Flush()
 {
-    BindFramebuffer();
-
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
@@ -159,14 +143,10 @@ void QuadRendererable::Flush()
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 TextRendererable::TextRendererable()
 {
-    m_layer = static_cast<uint32_t>(Renderer::LAYER_gui);
-
     m_vertexBase = new TextVertex[MaxTextVertices];
 
     glCreateVertexArrays(1, &m_VAO);
@@ -248,8 +228,6 @@ void TextRendererable::Reset()
 
 void TextRendererable::Flush()
 {
-    BindFramebuffer();
-
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     ptrdiff_t size = (uint8_t*)m_vertexPtr - (uint8_t*)m_vertexBase;
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, m_vertexBase);
@@ -263,8 +241,6 @@ void TextRendererable::Flush()
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 float TextRendererable::GetTextureIndex(Ref<Font> font)

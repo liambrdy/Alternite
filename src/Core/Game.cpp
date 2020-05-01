@@ -29,7 +29,7 @@ Scene* Game::OnUpdate(double delta)
         return nullptr;
     }
 
-    if (Input::IsKeyPressed(GLFW_KEY_SPACE))
+    if (Input::IsKeyPressed(GLFW_KEY_ESCAPE))
     {
         WindowMode newMode = Window::Get()->GetWindowMode() == WindowMode::Windowed ? WindowMode::Fullscreen : WindowMode::Windowed;
         Window::Get()->SetWindowMode(newMode);
@@ -60,9 +60,13 @@ Scene* Game::OnUpdate(double delta)
 
 void Game::OnRender() const
 {
-    Renderer::SetRenderOrigin(m_pos);
+    Renderer::SetRenderOrigin({ m_pos.x, m_pos.y + 250 });
 
-    Renderer::DrawQuad({ 0, 0 }, { 3000, 600 }, m_ground, 10.0f);
+    for (int x = -5; x <= 5; x++)
+    {
+        Renderer::DrawQuad({ x * (160 * 10), 0 }, { 160 * 10, 33 * 10 }, m_ground);
+    }
+    
     Renderer::DrawQuad(m_pos, { 19 * 4, 32 * 4 }, m_player);
 
     char str[100];

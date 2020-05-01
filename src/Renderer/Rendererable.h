@@ -16,14 +16,10 @@ public:
 
     virtual void Reset() = 0;
     virtual void Flush() = 0;
-
-    virtual void BindFramebuffer();
 protected:
     uint32_t m_VAO, m_VBO, m_EBO;
 
     uint32_t m_indexCount;
-
-    int32_t m_layer;
 
     Ref<Shader> m_shader;
 
@@ -34,7 +30,6 @@ struct QuadVertex
 {
     glm::vec2 position;
     glm::vec4 color;
-    glm::vec2 uvCoord;
     float texIndex;
     float tilingFactor;
 };
@@ -56,7 +51,7 @@ public:
 
     uint32_t GetIndexCount() const { return m_indexCount; }
 public:
-    static const uint32_t MaxQuads = 20000;
+    static const uint32_t MaxQuads = 2000;
     static const uint32_t MaxQuadVertices = MaxQuads * 4;
     static const uint32_t MaxQuadIndices = MaxQuads * 6;
 private:

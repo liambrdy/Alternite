@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Renderer::RenderData* Renderer::s_data = nullptr;
+
 uint32_t Renderer::s_width;
 uint32_t Renderer::s_height;
 Ref<Camera> Renderer::s_camera;
@@ -61,19 +62,8 @@ void Renderer::Init(uint32_t width, uint32_t height)
 
     s_data = new RenderData();
 
-    for (int i = 0; i < s_data->layers.size(); i++)
-    {
-        s_data->layers[i] = std::make_shared<Framebuffer>(width, height);
-    }
-
     s_data->quadRenderer = std::make_shared<QuadRendererable>();
     s_data->textRenderer = std::make_shared<TextRendererable>();
-
-    s_data->fboShader = std::make_shared<Shader>("assets/shaders/FBO.glsl");
-    s_data->fboShader->Bind();
-    s_data->fboShader->SetInt("u_Texture", 0);
-
-    glCreateVertexArrays(1, &s_data->fboVAO);
 
     s_camera = std::make_shared<Camera>(0, width, 0, height);
 }
@@ -89,42 +79,93 @@ void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     s_height = height;
     glViewport(0, 0, width, height);
 
-    for (int i = 0; i < s_data->layers.size(); i++)
-    {
-        s_data->layers[i]->Resize(width, height);
-    }
-
     s_camera->SetProjection(0, width, 0, height);
 }
 
 void Renderer::BeginFrame()
 {
+    s_data->s_requests.clear();
+
     s_data->quadRenderer->Reset();
     s_data->textRenderer->Reset();
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    for (auto& layer : s_data->layers)
-        layer->Clear(0, 0, 0, 0);
 }
+
+struct
+{
+    bool operator() (const RenderRequest& req1, const RenderRequest& req2)
+    {
+        int type1 = static_cast<int>(req1.type);
+        int type2 = static_cast<int>(req2.type);
+
+        return type1 > type2;
+    }
+} comparator;
 
 void Renderer::EndFrame()
 {
     glScissor(0, 0, s_width, s_height);
 
+    std::sort(s_data->s_requests.begin(), s_data->s_requests.end(), comparator);
+
+    for (int i = 0; i < s_data->s_requests.size(); i++)
+    {
+        RenderRequest& request = s_data->s_requests[i];
+
+        switch (request.type)
+        {
+            case RENDER_REQUEST_quad:
+            {
+                if (s_data->quadRenderer->GetIndexCount() >= QuadRendererable::MaxQuadIndices)
+                    s_data->quadRenderer->FlushAndReset();
+
+                float texIndex = 0.0f;
+                float tiling = request.quad.tiling;
+
+                if (request.quad.texture)
+                {
+                    texIndex = s_data->quadRenderer->GetTextureIndex(request.quad.texture);
+                }
+
+                for (uint32_t j = 0; j < 4; j++)
+                {
+                    QuadVertex vertex;
+                    vertex.position = request.quad.positions[j];
+                    vertex.color = request.quad.color;
+                    vertex.texIndex = texIndex;
+                    vertex.tilingFactor = tiling;
+
+                    s_data->quadRenderer->AddData(vertex);
+                }
+            } break;
+
+            case RENDER_REQUEST_text:
+            {
+                if (s_data->textRenderer->GetIndexCount() >= TextRendererable::MaxTextIndices)
+                    s_data->textRenderer->FlushAndReset();
+
+                float texIndex = s_data->textRenderer->GetTextureIndex(request.text.font);
+
+                for (uint32_t j = 0; j < 4; j++)
+                {
+                    TextVertex vertex;
+
+                    vertex.position = request.text.positions[j];
+                    vertex.color = request.text.color;
+                    vertex.uvCoord = request.text.uvs[j];
+                    vertex.texIndex = texIndex;
+                    vertex.renderMode = request.text.font->GetFlags() & FONT_NORMAL ? 0.0f : 1.0f;
+
+                    s_data->textRenderer->AddData(vertex);
+                }
+            } break;
+        }
+    }
+
     s_data->quadRenderer->Flush();
     s_data->textRenderer->Flush();
-
-    s_data->fboShader->Bind();
-
-    for (int i = s_data->layers.size() - 1; i >= 0; i--)
-    {
-        s_data->layers[i]->BindTexture();
-        glBindVertexArray(s_data->fboVAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindVertexArray(0);
-    }
 }
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)
@@ -139,32 +180,18 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::
 
 void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec4 color)
 {
-    if (s_data->quadRenderer->GetIndexCount() >= QuadRendererable::MaxQuadIndices)
-        s_data->quadRenderer->FlushAndReset();
+    RenderRequest request = {};
 
-    glm::vec2 quadPositions[4];
-    quadPositions[0] = p1;
-    quadPositions[1] = p2;
-    quadPositions[2] = p3;
-    quadPositions[3] = p4;
+    request.type = RENDER_REQUEST_quad;
+    request.quad.positions[0] = p1;
+    request.quad.positions[1] = p2;
+    request.quad.positions[2] = p3;
+    request.quad.positions[3] = p4;
+    request.quad.color = color;
+    request.quad.texture = nullptr;
+    request.quad.tiling = 1;
 
-    glm::vec2 quadUVs[4];
-    quadUVs[0] = { 0.0f, 0.0f };
-    quadUVs[1] = { 1.0f, 0.0f };
-    quadUVs[2] = { 1.0f, 1.0f };
-    quadUVs[3] = { 0.0f, 1.0f };
-
-    for (uint32_t i = 0; i < 4; i++)
-    {
-        QuadVertex vertex;
-        vertex.position = quadPositions[i];
-        vertex.color = color;
-        vertex.uvCoord = quadUVs[i];
-        vertex.texIndex = 0;
-        vertex.tilingFactor = 1.0f;
-
-        s_data->quadRenderer->AddData(vertex);
-    }
+    s_data->s_requests.push_back(request);
 }
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture> texture, float tiling, glm::vec4 tint)
@@ -179,35 +206,18 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture
 
 void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, Ref<Texture> texture, float tiling, glm::vec4 tint)
 {
-    if (s_data->quadRenderer->GetIndexCount() >= QuadRendererable::MaxQuadIndices)
-        s_data->quadRenderer->FlushAndReset();
+    RenderRequest request = {};
+    
+    request.type = RENDER_REQUEST_quad;
+    request.quad.positions[0] = p1;
+    request.quad.positions[1] = p2;
+    request.quad.positions[2] = p3;
+    request.quad.positions[3] = p4;
+    request.quad.color = tint;
+    request.quad.texture = texture;
+    request.quad.tiling = tiling;
 
-    float textureIndex = s_data->quadRenderer->GetTextureIndex(texture);
-
-    glm::vec2 quadPositions[4];
-    quadPositions[0] = p1;
-    quadPositions[1] = p2;
-    quadPositions[2] = p3;
-    quadPositions[3] = p4;
-
-    glm::vec2 quadUVs[4];
-    quadUVs[0] = { 0.0f, 0.0f };
-    quadUVs[1] = { 1.0f, 0.0f };
-    quadUVs[2] = { 1.0f, 1.0f };
-    quadUVs[3] = { 0.0f, 1.0f };
-
-    for (uint32_t i = 0; i < 4; i++)
-    {
-        QuadVertex vertex;
-
-        vertex.position = quadPositions[i];
-        vertex.color = tint;
-        vertex.uvCoord = quadUVs[i];
-        vertex.texIndex = textureIndex;
-        vertex.tilingFactor = tiling;
-
-        s_data->quadRenderer->AddData(vertex);
-    }
+    s_data->s_requests.push_back(request);
 }
 
 float Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const float scale, const glm::vec4& color)
@@ -241,48 +251,32 @@ float Renderer::DrawText(const glm::vec2& pos, const std::string& text, Ref<Font
 
 void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, const char* prev, const float scale, const glm::vec4& color)
 {
-    if (s_data->textRenderer->GetIndexCount() >= TextRendererable::MaxTextIndices)
-        s_data->textRenderer->FlushAndReset();
-
     auto glyph = font->GetCharacter(curr);
     if (prev)
     {
         pos.x += ftgl::texture_glyph_get_kerning(glyph, prev);
     }
 
-    float textureIndex = s_data->textRenderer->GetTextureIndex(font);
-
     float x0 = pos.x + (glyph->offset_x * scale);
     float y0 = pos.y + (glyph->offset_y * scale);
     float x1 = x0 + (glyph->width * scale);
     float y1 = y0 - (glyph->height * scale);
 
-    float scaledHeight = glyph->offset_y * scale;
+    RenderRequest request = {};
 
-    glm::vec2 quadPositions[4];
-    quadPositions[0] = { x0, y0 };
-    quadPositions[1] = { x0, y1 };
-    quadPositions[2] = { x1, y1 };
-    quadPositions[3] = { x1, y0 };
+    request.type = RENDER_REQUEST_text;
+    request.text.positions[0] = { x0, y0 };
+    request.text.positions[1] = { x0, y1 };
+    request.text.positions[2] = { x1, y1 };
+    request.text.positions[3] = { x1, y0 };
+    request.text.uvs[0] = { glyph->s0, glyph->t0 };
+    request.text.uvs[1] = { glyph->s0, glyph->t1 };
+    request.text.uvs[2] = { glyph->s1, glyph->t1 };
+    request.text.uvs[3] = { glyph->s1, glyph->t0 };
+    request.text.color = color;
+    request.text.font = font;
 
-    glm::vec2 quadUVs[4];
-    quadUVs[0] = { glyph->s0, glyph->t0 };
-    quadUVs[1] = { glyph->s0, glyph->t1 };
-    quadUVs[2] = { glyph->s1, glyph->t1 };
-    quadUVs[3] = { glyph->s1, glyph->t0 };
-
-    for (uint32_t i = 0; i < 4; i++)
-    {
-        TextVertex vertex;
-
-        vertex.position = quadPositions[i];
-        vertex.color = color;
-        vertex.uvCoord = quadUVs[i];
-        vertex.texIndex = textureIndex;
-        vertex.renderMode = font->GetFlags() & FONT_NORMAL ? 0.0f : 1.0f;
-
-        s_data->textRenderer->AddData(vertex);
-    }
+    s_data->s_requests.push_back(request);
 
     pos.x += glyph->advance_x * scale;
     // pos.y += glyph->advance_y;

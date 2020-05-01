@@ -21,7 +21,7 @@ private:
     Ref<Font> m_font;
 
     Ref<Texture> m_ground, m_player;
-    glm::vec2 m_pos = { 600, 400 };
+    glm::vec2 m_pos = { 600, 33 * 10 - 30 };
 
     float m_delta;
 };

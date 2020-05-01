@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <array>
+#include <vector>
 
 #include <glm/glm.hpp>
 
@@ -14,6 +15,34 @@
 #include "Renderer/Rendererable.h"
 
 #include "Core/Common.h"
+
+enum RenderRequestType
+{
+    RENDER_REQUEST_quad,
+    RENDER_REQUEST_text
+};
+
+struct RenderRequest
+{
+    RenderRequestType type;
+
+    struct
+    {
+        glm::vec2 positions[4];
+        glm::vec4 color;
+        float tiling;
+        Ref<Texture> texture;
+    } quad;
+
+    struct
+    {
+        glm::vec2 positions[4];
+        glm::vec2 uvs[4];
+        glm::vec4 color;
+        float mode;
+        Ref<Font> font;
+    } text;
+};
 
 class Renderer
 {
@@ -37,26 +66,14 @@ public:
     static float DrawText(const glm::vec2& pos, const std::string& text, Ref<Font> font, const float scale, const glm::vec4& color = glm::vec4(1.0f));
     static void DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, const char* prev, const float scale, const glm::vec4& color);
 
-    enum Layer
-    {
-        LAYER_game = 0,
-        LAYER_gui,
-        LAYER_MAX
-    };
-
-    static std::array<Ref<Framebuffer>, LAYER_MAX - 1> GetLayers() { return s_data->layers; }
-
     static Ref<Camera> GetCamera() { return s_camera; }
 private:
     struct RenderData
     {
-        std::array<Ref<Framebuffer>, LAYER_MAX - 1> layers;
-
         Ref<QuadRendererable> quadRenderer;
         Ref<TextRendererable> textRenderer;
-        
-        uint32_t fboVAO;
-        Ref<Shader> fboShader;
+
+        std::vector<RenderRequest> s_requests;
     };
 
     static RenderData* s_data;

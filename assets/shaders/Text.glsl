@@ -35,7 +35,7 @@ in float v_RenderMode;
 
 uniform sampler2D u_Textures[32];
 
-const float glyphCenter = 0.25;
+const float glyphCenter = 0.35;
 
 void main()
 {

@@ -37,20 +37,20 @@ Scene* Game::OnUpdate(double delta)
     
     if (Input::IsKeyDown(GLFW_KEY_A))
     {
-        m_pos.x -= 200.0f * delta;
+        m_pos.x -= 300.0f * delta;
     }
     else if (Input::IsKeyDown(GLFW_KEY_D))
     {
-        m_pos.x += 200.0f * delta;
+        m_pos.x += 300.0f * delta;
     }
 
     if (Input::IsKeyDown(GLFW_KEY_W))
     {
-        m_pos.y += 200.0f * delta;
+        m_pos.y += 300.0f * delta;
     }
     else if (Input::IsKeyDown(GLFW_KEY_S))
     {
-        m_pos.y -= 200.0f * delta;
+        m_pos.y -= 300.0f * delta;
     }
 
     m_delta = delta;

@@ -68,6 +68,8 @@ public:
 
     static Ref<Camera> GetCamera() { return s_camera; }
 private:
+    static bool IsNotInScene(const glm::vec2& pos, const glm::vec2& size);
+private:
     struct RenderData
     {
         Ref<QuadRendererable> quadRenderer;

@@ -170,6 +170,9 @@ void Renderer::EndFrame()
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)
 {
+    if (IsNotInScene(pos, size))
+        return;
+
     glm::vec2 p1 = { pos.x, pos.y };
     glm::vec2 p2 = { pos.x + size.x, pos.y };
     glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
@@ -196,6 +199,9 @@ void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture> texture, float tiling, glm::vec4 tint)
 {
+    if (IsNotInScene(pos, size))
+        return;
+
     glm::vec2 p1 = { pos.x, pos.y };
     glm::vec2 p2 = { pos.x + size.x, pos.y };
     glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
@@ -280,4 +286,14 @@ void Renderer::DrawCharacter(glm::vec2& pos, Ref<Font> font, const char* curr, c
 
     pos.x += glyph->advance_x * scale;
     // pos.y += glyph->advance_y;
+}
+
+bool Renderer::IsNotInScene(const glm::vec2& pos, const glm::vec2& size)
+{
+    glm::vec2 camPos = s_camera->GetPosition();
+
+    bool vertBounds = pos.x + size.x < camPos.x || pos.x > camPos.x + s_width;
+    bool horizBounds = pos.y + size.y < camPos.y || pos.y > camPos.y + s_height;
+
+    return vertBounds || horizBounds;
 }

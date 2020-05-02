@@ -59,6 +59,7 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Input.cpp
+
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Rendererable.cpp
@@ -84,6 +85,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.h
     ${PROJECT_SOURCE_DIR}/src/Core/Common.h
     ${PROJECT_SOURCE_DIR}/src/Core/Input.h
+
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Rendererable.h

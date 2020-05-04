@@ -56,9 +56,12 @@ CPMAddPackage(
 
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
-    ${PROJECT_SOURCE_DIR}/src/Core/Game.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Input.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/Game/Game.cpp
+    ${PROJECT_SOURCE_DIR}/src/Game/Player.cpp
+    ${PROJECT_SOURCE_DIR}/src/Game/Ground.cpp
 
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.cpp
@@ -81,10 +84,14 @@ set (sources
 
 set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Scene.h
-    ${PROJECT_SOURCE_DIR}/src/Core/Game.h
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.h
     ${PROJECT_SOURCE_DIR}/src/Core/Common.h
     ${PROJECT_SOURCE_DIR}/src/Core/Input.h
+
+    ${PROJECT_SOURCE_DIR}/src/Game/Game.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Player.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Ground.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Entity.h
 
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.h

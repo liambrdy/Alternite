@@ -6,7 +6,11 @@
 #include "Renderer/Texture.h"
 #include "Renderer/Text/Font.h"
 
+#include "Game/Entity.h"
+
 #include <glm/glm.hpp>
+
+#include <vector>
 
 class Game : public Scene
 {
@@ -20,8 +24,10 @@ private:
     Ref<Texture> m_texture;
     Ref<Font> m_font;
 
-    Ref<Texture> m_ground, m_player;
-    glm::vec2 m_pos = { 600, 33 * 10 - 30 };
+    Ref<Texture> m_ground;
+
+    std::vector<Entity*> m_entities;
+    Entity* m_player;
 
     float m_delta;
 };

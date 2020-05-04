@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include "Core/Scene.h"
-#include "Core/Game.h"
 #include "Core/Logger.h"
 #include "Core/Common.h"
+
+#include "Game/Game.h"
 
 #include "Renderer/Window.h"
 #include "Renderer/Renderer.h"

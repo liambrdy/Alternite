@@ -129,11 +129,19 @@ void Renderer::EndFrame()
                     texIndex = s_data->quadRenderer->GetTextureIndex(request.quad.texture);
                 }
 
+                glm::vec2 uvs[4] = {
+                    { request.quad.texCoords[0] },
+                    { request.quad.texCoords[1].x,  request.quad.texCoords[0].y },
+                    { request.quad.texCoords[1].x,  request.quad.texCoords[1].y },
+                    { request.quad.texCoords[0].x,  request.quad.texCoords[1].y },
+                };
+
                 for (uint32_t j = 0; j < 4; j++)
                 {
                     QuadVertex vertex;
                     vertex.position = request.quad.positions[j];
                     vertex.color = request.quad.color;
+                    vertex.texCoord = uvs[j];
                     vertex.texIndex = texIndex;
                     vertex.tilingFactor = tiling;
 
@@ -207,10 +215,26 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture
     glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
     glm::vec2 p4 = { pos.x, pos.y + size.y };
 
-    DrawQuad(p1, p2, p3, p4, texture, tiling, tint);
+    glm::vec2 uv1 = { 0, 0 };
+    glm::vec2 uv2 = { 1, 1 };
+
+    DrawQuad(p1, p2, p3, p4, uv1, uv2, texture, tiling, tint);
 }
 
-void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, Ref<Texture> texture, float tiling, glm::vec4 tint)
+void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& uv1, const glm::vec2& uv2, Ref<Texture> texture, float tiling, glm::vec4 tint)
+{
+    if (IsNotInScene(pos, size))
+        return;
+
+    glm::vec2 p1 = { pos.x, pos.y };
+    glm::vec2 p2 = { pos.x + size.x, pos.y };
+    glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
+    glm::vec2 p4 = { pos.x, pos.y + size.y };
+
+    DrawQuad(p1, p2, p3, p4, uv1, uv2, texture, tiling, tint);
+}
+
+void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& uv1, const glm::vec2& uv2, Ref<Texture> texture, float tiling, glm::vec4 tint)
 {
     RenderRequest request = {};
     
@@ -219,6 +243,8 @@ void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
     request.quad.positions[1] = p2;
     request.quad.positions[2] = p3;
     request.quad.positions[3] = p4;
+    request.quad.texCoords[0] = uv1;
+    request.quad.texCoords[1] = uv2;
     request.quad.color = tint;
     request.quad.texture = texture;
     request.quad.tiling = tiling;

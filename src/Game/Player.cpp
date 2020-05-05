@@ -7,7 +7,8 @@
 Player::Player()
     : m_position(300, 33 * 10 - 20), m_size(19 * 4, 32 * 4)
 {
-    m_texture = std::make_shared<Texture>("assets/textures/Player.png");
+    SpriteManager::LoadTexture("playerSheet", "assets/textures/Player.png");
+    m_sprite = SpriteManager::LoadSprite("player", "playerSheet", { 0, 0 }, { 19, 32 });
 }
 
 Player::~Player()
@@ -37,5 +38,5 @@ void Player::Update(float dt)
 
 void Player::Render() const
 {
-    Renderer::DrawQuad(m_position, m_size, m_texture);   
+    Renderer::DrawQuad(m_position, m_size, m_sprite.uv1, m_sprite.uv2, m_sprite.sheet); 
 }

@@ -7,6 +7,7 @@
 #include "Renderer/Texture.h"
 
 #include "Game/Entity.h"
+#include "Game/SpriteManager.h"
 
 class Player : public Entity
 {
@@ -23,5 +24,5 @@ private:
     glm::vec2 m_position;
     glm::vec2 m_size;
 
-    Ref<Texture> m_texture;
+    Sprite m_sprite;
 };

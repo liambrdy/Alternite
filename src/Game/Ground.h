@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game/Entity.h"
+#include "Game/SpriteManager.h"
 
 #include "Core/Common.h"
 
@@ -21,5 +22,5 @@ private:
     glm::vec2 m_position;
     glm::vec2 m_size;
 
-    Ref<Texture> m_texture;
+    Sprite m_sprite;
 };

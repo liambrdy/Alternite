@@ -30,6 +30,7 @@ struct QuadVertex
 {
     glm::vec2 position;
     glm::vec4 color;
+    glm::vec2 texCoord;
     float texIndex;
     float tilingFactor;
 };

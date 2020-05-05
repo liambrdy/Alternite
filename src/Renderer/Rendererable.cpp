@@ -25,10 +25,11 @@ QuadRendererable::QuadRendererable()
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, MaxQuadVertices * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
-    SetBufferAttributeLayout(0, 2, 8, 0);
-    SetBufferAttributeLayout(1, 4, 8, 2);
-    SetBufferAttributeLayout(2, 1, 8, 6);
-    SetBufferAttributeLayout(3, 1, 8, 7);
+    SetBufferAttributeLayout(0, 2, 10, 0);
+    SetBufferAttributeLayout(1, 4, 10, 2);
+    SetBufferAttributeLayout(2, 2, 10, 6);
+    SetBufferAttributeLayout(3, 1, 10, 8);
+    SetBufferAttributeLayout(4, 1, 10, 9);
 
     uint32_t* quadIndices = new uint32_t[MaxQuadIndices];
 

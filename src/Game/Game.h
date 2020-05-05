@@ -21,10 +21,7 @@ public:
     virtual Scene* OnUpdate(double delta) override;
     virtual void OnRender() const override;
 private:
-    Ref<Texture> m_texture;
     Ref<Font> m_font;
-
-    Ref<Texture> m_ground;
 
     std::vector<Entity*> m_entities;
     Entity* m_player;

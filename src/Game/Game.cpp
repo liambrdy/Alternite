@@ -8,15 +8,15 @@
 
 #include "Game/Player.h"
 #include "Game/Ground.h"
+#include "Game/SpriteManager.h"
 
 #include <cstring>
 
 Game::Game()
 {
-    m_texture = std::make_shared<Texture>("assets/textures/Grid.png");
+    SpriteManager::Init();
+    
     m_font = std::make_shared<Font>("assets/fonts/hack.ttf", FONT_SIGNED_DISTANCE);
-
-    m_ground = std::make_shared<Texture>("assets/textures/Ground.png");
 
     m_player = new Player();
     m_entities.push_back(m_player);
@@ -32,6 +32,8 @@ Game::~Game()
 {
     for (auto& entity : m_entities)
         delete entity;
+    
+    SpriteManager::Shutdown();
 }
 
 Scene* Game::OnUpdate(double delta)

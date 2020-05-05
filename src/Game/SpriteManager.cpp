@@ -19,12 +19,17 @@ void SpriteManager::LoadTexture(const std::string& name, const std::string& file
         return;
 
     Ref<Texture> sheet = std::make_shared<Texture>(filepath);
-    s_sheets.insert(std::pair(name, sheet));
+    s_sheets.insert(std::pair<std::string, Ref<Texture>>(name, sheet));
 }
 
 Sprite SpriteManager::LoadSprite(const std::string& name, const std::string& sheetName, const glm::vec2& pos, const glm::vec2& size)
 {
     ASSERT(s_sheets.find(sheetName) != s_sheets.end(), "Failed to find sprite sheet for sprite creation");
+
+    if (s_sprites.find(name) != s_sprites.end())
+    {
+        return GetSprite(name);
+    }
 
     auto sheet = s_sheets.at(sheetName);
 
@@ -36,7 +41,7 @@ Sprite SpriteManager::LoadSprite(const std::string& name, const std::string& she
     sprite.uv1 = uv1;
     sprite.uv2 = uv2;
 
-    s_sprites.insert(std::pair(name, sprite));
+    s_sprites.insert(std::pair<std::string, Sprite>(name, sprite));
 
     return sprite;
 }

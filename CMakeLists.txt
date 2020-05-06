@@ -60,9 +60,10 @@ set (sources
     ${PROJECT_SOURCE_DIR}/src/Core/Input.cpp
 
     ${PROJECT_SOURCE_DIR}/src/Game/Game.cpp
-    ${PROJECT_SOURCE_DIR}/src/Game/Player.cpp
-    ${PROJECT_SOURCE_DIR}/src/Game/Ground.cpp
     ${PROJECT_SOURCE_DIR}/src/Game/SpriteManager.cpp
+    ${PROJECT_SOURCE_DIR}/src/Game/Systems.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/ECS/ECS.cpp
 
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.cpp
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.cpp
@@ -90,10 +91,14 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Core/Input.h
 
     ${PROJECT_SOURCE_DIR}/src/Game/Game.h
-    ${PROJECT_SOURCE_DIR}/src/Game/Player.h
-    ${PROJECT_SOURCE_DIR}/src/Game/Ground.h
-    ${PROJECT_SOURCE_DIR}/src/Game/Entity.h
     ${PROJECT_SOURCE_DIR}/src/Game/SpriteManager.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Components.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Systems.h
+
+    ${PROJECT_SOURCE_DIR}/src/ECS/EntityManager.h
+    ${PROJECT_SOURCE_DIR}/src/ECS/ComponentArray.h
+    ${PROJECT_SOURCE_DIR}/src/ECS/ComponentManager.h
+    ${PROJECT_SOURCE_DIR}/src/ECS/ECS.h
 
     ${PROJECT_SOURCE_DIR}/src/Renderer/Window.h
     ${PROJECT_SOURCE_DIR}/src/Renderer/Renderer.h

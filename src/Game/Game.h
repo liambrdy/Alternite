@@ -6,7 +6,10 @@
 #include "Renderer/Texture.h"
 #include "Renderer/Text/Font.h"
 
-#include "Game/Entity.h"
+#include "Game/Components.h"
+#include "Game/Systems.h"
+
+#include "ECS/ECS.h"
 
 #include <glm/glm.hpp>
 
@@ -23,8 +26,11 @@ public:
 private:
     Ref<Font> m_font;
 
-    std::vector<Entity*> m_entities;
-    Entity* m_player;
+    Entity m_player;
+    Ref<RenderSystem> m_renderSystem;
+    Ref<InputSystem> m_inputSystem;
+
+    std::vector<Entity> m_grounds;
 
     float m_delta;
 };

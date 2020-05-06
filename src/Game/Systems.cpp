@@ -1,6 +1,5 @@
 #include "Game/Systems.h"
 
-#include "Game/Components.h"
 #include "Renderer/Renderer.h"
 
 #include "Core/Input.h"

@@ -22,19 +22,8 @@ Game::Game()
     RegisterComponents();
 
     m_renderSystem = ECS::RegisterSystem<RenderSystem>();
-
-    Signature signature;
-    signature.set(ECS::GetComponentType<PositionComponent>());
-    signature.set(ECS::GetComponentType<SizeComponent>());
-    signature.set(ECS::GetComponentType<SpriteComponent>());
-    ECS::SetSystemSignature<RenderSystem>(signature);
-
     m_inputSystem = ECS::RegisterSystem<InputSystem>();
-
-    signature.reset();
-    signature.set(ECS::GetComponentType<PositionComponent>());
-    signature.set(ECS::GetComponentType<InputComponent>());
-    ECS::SetSystemSignature<InputSystem>(signature);
+    SetSystemSignatures();
     
     m_player = ECS::CreateEntity();
     ECS::AddComponent<PositionComponent>(m_player, { .position = { 300, 33 * 10 - 20 } });

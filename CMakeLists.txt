@@ -29,7 +29,7 @@ CPMAddPackage(
     NAME glad
     GITHUB_REPOSITORY Dav1dde/glad
     GIT_TAG v0.1.33
-    OPTIONS 
+    OPTIONS
         "GLAD_PROFILE core"
         "GLAD_API gl=4.6"
 )
@@ -54,6 +54,16 @@ CPMAddPackage(
     GIT_TAG VER-2-10-0
 )
 
+CPMAddPackage(
+    NAME box2d
+    GITHUB_REPOSITORY erincatto/box2d
+    GIT_TAG master
+    OPTIONS
+        "BOX2D_BUILD_UNIT_TESTS OFF"
+        "BOX2D_BUILD_TESTBED OFF"
+        "BOX2D_BUILD_DOCS OFF"
+)
+
 set (sources
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/Core/Logger.cpp
@@ -61,7 +71,6 @@ set (sources
 
     ${PROJECT_SOURCE_DIR}/src/Game/Game.cpp
     ${PROJECT_SOURCE_DIR}/src/Game/SpriteManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/Game/Systems.cpp
 
     ${PROJECT_SOURCE_DIR}/src/ECS/ECS.cpp
 
@@ -95,6 +104,10 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Game/Components.h
     ${PROJECT_SOURCE_DIR}/src/Game/Systems.h
 
+    ${PROJECT_SOURCE_DIR}/src/Game/Systems/InputSystem.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Systems/RenderSystem.h
+    ${PROJECT_SOURCE_DIR}/src/Game/Systems/PhysicsSystem.h
+
     ${PROJECT_SOURCE_DIR}/src/ECS/EntityManager.h
     ${PROJECT_SOURCE_DIR}/src/ECS/ComponentArray.h
     ${PROJECT_SOURCE_DIR}/src/ECS/ComponentManager.h
@@ -119,7 +132,7 @@ set (headers
     ${PROJECT_SOURCE_DIR}/src/Renderer/Text/platform.h
 )
 
-add_executable(Alternite ${sources})
+add_executable(Alternite ${sources} ${headers})
 set_target_properties(Alternite
     PROPERTIES
     CXX_STANDARD 17
@@ -132,6 +145,7 @@ target_link_libraries(Alternite
     PRIVATE glad
     PRIVATE spdlog
     PRIVATE freetype
+    PRIVATE box2d
 )
 
 target_include_directories(Alternite
@@ -141,6 +155,7 @@ target_include_directories(Alternite
     PRIVATE ${freetype_SOURCE_DIR}/include
     PRIVATE ${spdlog_SOURCE_DIR}
     PRIVATE ${glm_SOURCE_DIR}
+    PRIVATE ${box2d_SOURCE_DIR}/include
 )
 
 target_compile_definitions(Alternite

@@ -4,26 +4,25 @@
 
 #include "Game/Components.h"
 
-#define NewSystem(name, args)   \
-class name : public System      \
-{                               \
-public:                         \
-    void Update(args);          \
-};
-
-NewSystem(RenderSystem, void)
-NewSystem(InputSystem, float)
+#include "Game/Systems/RenderSystem.h"
+#include "Game/Systems/InputSystem.h"
+#include "Game/Systems/PhysicsSystem.h"
 
 static void SetSystemSignatures()
 {
     Signature signature;
-    signature.set(ECS::GetComponentType<PositionComponent>());
-    signature.set(ECS::GetComponentType<SizeComponent>());
+    signature.set(ECS::GetComponentType<TransformComponent>());
     signature.set(ECS::GetComponentType<SpriteComponent>());
     ECS::SetSystemSignature<RenderSystem>(signature);
 
     signature.reset();
-    signature.set(ECS::GetComponentType<PositionComponent>());
-    signature.set(ECS::GetComponentType<InputComponent>());
+    signature.set(ECS::GetComponentType<MovementComponent>());
+    signature.set(ECS::GetComponentType<TransformComponent>());
+    signature.set(ECS::GetComponentType<ColliderComponent>());
     ECS::SetSystemSignature<InputSystem>(signature);
+
+    signature.reset();
+    signature.set(ECS::GetComponentType<TransformComponent>());
+    signature.set(ECS::GetComponentType<ColliderComponent>());
+    ECS::SetSystemSignature<PhysicsSystem>(signature);
 }

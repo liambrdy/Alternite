@@ -16,6 +16,9 @@ public:
     const glm::mat4& GetProjectionMatrix() const { return m_projectionMatrix; }
 	const glm::mat4& GetViewMatrix() const { return m_viewMatrix; }
 	const glm::mat4& GetViewProjectionMatrix() const { return m_viewProjectionMatrix; }
+
+	const float GetZoom() const { return m_zoom; }
+	void SetZoom(float zoom) { m_zoom = zoom; }
 private:
     void RecalculateViewMatrix();
 private:
@@ -24,4 +27,6 @@ private:
     glm::mat4 m_viewProjectionMatrix;
 
     glm::vec2 m_position;
+
+    float m_zoom;
 };

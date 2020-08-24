@@ -29,6 +29,7 @@ private:
     Entity m_player;
     Ref<RenderSystem> m_renderSystem;
     Ref<InputSystem> m_inputSystem;
+    Ref<PhysicsSystem> m_physicsSystem;
 
     std::vector<Entity> m_grounds;
 

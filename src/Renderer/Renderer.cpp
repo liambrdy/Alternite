@@ -66,6 +66,7 @@ void Renderer::Init(uint32_t width, uint32_t height)
     s_data->textRenderer = std::make_shared<TextRendererable>();
 
     s_camera = std::make_shared<Camera>(0, width, 0, height);
+    s_camera->SetZoom(4.0f);
 }
 
 void Renderer::Shutdown()
@@ -139,7 +140,7 @@ void Renderer::EndFrame()
                 for (uint32_t j = 0; j < 4; j++)
                 {
                     QuadVertex vertex;
-                    vertex.position = request.quad.positions[j];
+                    vertex.position = request.quad.positions[j] * s_camera->GetZoom();
                     vertex.color = request.quad.color;
                     vertex.texCoord = uvs[j];
                     vertex.texIndex = texIndex;
@@ -178,13 +179,16 @@ void Renderer::EndFrame()
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)
 {
-    if (IsNotInScene(pos, size))
+    glm::vec2 convertedPos = ConvertToPixels(pos);
+    glm::vec2 convertedSize = ConvertToPixels(size);
+
+    if (IsNotInScene(convertedPos, convertedSize))
         return;
 
-    glm::vec2 p1 = { pos.x, pos.y };
-    glm::vec2 p2 = { pos.x + size.x, pos.y };
-    glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
-    glm::vec2 p4 = { pos.x, pos.y + size.y };
+    glm::vec2 p1 = { convertedPos.x, convertedPos.y };
+    glm::vec2 p2 = { convertedPos.x + convertedSize.x, convertedPos.y };
+    glm::vec2 p3 = { convertedPos.x + convertedSize.x, convertedPos.y + convertedSize.y };
+    glm::vec2 p4 = { convertedPos.x, convertedPos.y + convertedSize.y };
 
     DrawQuad(p1, p2, p3, p4, color);
 }
@@ -207,13 +211,16 @@ void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture> texture, float tiling, glm::vec4 tint)
 {
-    if (IsNotInScene(pos, size))
+    glm::vec2 convertedPos = ConvertToPixels(pos);
+    glm::vec2 convertedSize = ConvertToPixels(size);
+
+    if (IsNotInScene(convertedPos, convertedSize))
         return;
 
-    glm::vec2 p1 = { pos.x, pos.y };
-    glm::vec2 p2 = { pos.x + size.x, pos.y };
-    glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
-    glm::vec2 p4 = { pos.x, pos.y + size.y };
+    glm::vec2 p1 = { convertedPos.x, convertedPos.y };
+    glm::vec2 p2 = { convertedPos.x + convertedSize.x, convertedPos.y };
+    glm::vec2 p3 = { convertedPos.x + convertedSize.x, convertedPos.y + convertedSize.y };
+    glm::vec2 p4 = { convertedPos.x, convertedPos.y + convertedSize.y };
 
     glm::vec2 uv1 = { 0, 0 };
     glm::vec2 uv2 = { 1, 1 };
@@ -223,13 +230,16 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture
 
 void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& uv1, const glm::vec2& uv2, Ref<Texture> texture, float tiling, glm::vec4 tint)
 {
-    if (IsNotInScene(pos, size))
+    glm::vec2 convertedPos = ConvertToPixels(pos);
+    glm::vec2 convertedSize = ConvertToPixels(size);
+
+    if (IsNotInScene(convertedPos, convertedSize))
         return;
 
-    glm::vec2 p1 = { pos.x, pos.y };
-    glm::vec2 p2 = { pos.x + size.x, pos.y };
-    glm::vec2 p3 = { pos.x + size.x, pos.y + size.y };
-    glm::vec2 p4 = { pos.x, pos.y + size.y };
+    glm::vec2 p1 = { convertedPos.x, convertedPos.y };
+    glm::vec2 p2 = { convertedPos.x + convertedSize.x, convertedPos.y };
+    glm::vec2 p3 = { convertedPos.x + convertedSize.x, convertedPos.y + convertedSize.y };
+    glm::vec2 p4 = { convertedPos.x, convertedPos.y + convertedSize.y };
 
     DrawQuad(p1, p2, p3, p4, uv1, uv2, texture, tiling, tint);
 }
@@ -237,7 +247,7 @@ void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::
 void Renderer::DrawQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, const glm::vec2& uv1, const glm::vec2& uv2, Ref<Texture> texture, float tiling, glm::vec4 tint)
 {
     RenderRequest request = {};
-    
+
     request.type = RENDER_REQUEST_quad;
     request.quad.positions[0] = p1;
     request.quad.positions[1] = p2;
@@ -322,4 +332,10 @@ bool Renderer::IsNotInScene(const glm::vec2& pos, const glm::vec2& size)
     bool horizBounds = pos.y + size.y < camPos.y || pos.y > camPos.y + s_height;
 
     return vertBounds || horizBounds;
+}
+
+glm::vec2 Renderer::ConvertToPixels(const glm::vec2& vec)
+{
+    glm::vec2 result = { vec.x * PPM, vec.y * PPM };
+    return result;
 }
